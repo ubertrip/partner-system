@@ -6,6 +6,7 @@ import (
 	"sync/atomic"
 	"os"
 	"fmt"
+	configuration "github.com/ubertrip/partner-system/config"
 )
 
 var (
@@ -24,12 +25,14 @@ func InitDB() {
 		}
 	}
 
+	config := configuration.Get()
+
 	connection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true",
-		"root",
-		"WxY7!mno",
-		"localhost",
-		"3306",
-		"partner-system")
+		config.Database.User,
+		config.Database.Password,
+		config.Database.Host,
+		config.Database.Port,
+		config.Database.Schema)
 
 	db, err = sql.Open("mysql", connection)
 	onError(err)

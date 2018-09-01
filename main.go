@@ -5,6 +5,7 @@ import (
 	"github.com/ubertrip/partner-system/controllers"
 	"github.com/ubertrip/partner-system/repositories"
 	"github.com/labstack/echo/middleware"
+	configuration "github.com/ubertrip/partner-system/config"
 )
 
 func main() {
@@ -20,6 +21,7 @@ func main() {
 
 	e.GET("/", controllers.Info)
 	e.POST("/payments", controllers.UpdateWeeklyPayments)
+	e.POST("/credit/:driverUUID", controllers.AddCredit)
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(":"+configuration.Get().Port))
 }
