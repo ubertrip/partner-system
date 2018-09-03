@@ -21,7 +21,15 @@ func main() {
 
 	e.GET("/", controllers.Info)
 	e.POST("/payments", controllers.UpdateWeeklyPayments)
-	e.POST("/credit/:driverUUID", controllers.AddCredit)
+	e.POST("/statements", controllers.UpdateWeeklyStatements)
+	e.PUT("/drivers/:id", controllers.UpdateDriver) // :driverUUID
+	e.GET("/drivers/:id", controllers.GetDriver) // :driverId
+
+	e.GET("/statements", controllers.GetStatements)
+
+	e.POST("/credit/:uuid", controllers.AddCredit) // :driverUuuid
+	e.GET("/credit/:uuid", controllers.GetByStatement) // :statementUuid
+	e.GET("/credit/:statementUUID/:driverUUID", controllers.GetDriverCredit)
 
 	e.Logger.Fatal(e.Start(":"+configuration.Get().Port))
 }
