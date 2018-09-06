@@ -71,27 +71,8 @@ func AddPayment(p models.Payment) (ok bool) {
 	return
 }
 
-func GetDriverCreditByStatement(statementUuid string, driverUuid string) (creditReport models.CreditReport, err error) {
-	err = Get().QueryRow("SELECT SUM(credit) as credit, wp.cashCollected as cashCollected, (cashCollected - SUM(credit)) as diff, wp.driverUuid, d.name, wp.incentives, wp.miscPayment, wp.netFares, wp.netPayout FROM `payments` as p JOIN `weekly-payments` as wp JOIN `drivers` as d ON p.statementUuid = ? && p.driverUuid = ? && (wp.driverUuid = p.driverUuid && p.statementUuid = wp.paymentUuid)", statementUuid, driverUuid).Scan(
-		&creditReport.Credit,
-		&creditReport.CashCollected,
-		&creditReport.Diff,
-		&creditReport.DriverUuid,
-		&creditReport.DriverName,
-		&creditReport.Incentives,
-		&creditReport.MiscPayment,
-		&creditReport.NetFares,
-		&creditReport.NetPayout)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return
-}
-
 func GetDriverPaymetListByStatementId(statementUuid string, driverUuid string) (payments []models.Payment, err error) {
-	rows, err := Get().Query("SELECT uuid, credit, driverUuid, createdAt, createdBy, statementUuid FROM `payments` WHERE statementUuid = ? and driverUuid = ?", statementUuid, driverUuid)
+	rows, err := Get().Query("SELECT uuid, credit, driverUuid, createdAt, createdBy, statementUuid FROM `payments` WHERE statementUuid = ? and driverUuid = ? ORDER BY createdAt DESC", statementUuid, driverUuid)
 
 	if err != nil {
 		fmt.Println(err)
@@ -118,39 +99,8 @@ func GetDriverPaymetListByStatementId(statementUuid string, driverUuid string) (
 	return payments, err
 }
 
-func GetCreditsByStatement(statementUuid string) (creditReports []models.CreditReport, err error) {
-	rows, err := Get().Query("SELECT SUM(credit) as credit, wp.cashCollected as cashCollected, (cashCollected - SUM(credit)) as diff, wp.driverUuid, d.name, wp.incentives, wp.miscPayment, wp.netFares, wp.netPayout  FROM `payments` as p JOIN `weekly-payments` as wp JOIN `drivers` as d  ON p.statementUuid=? && p.driverUuid = wp.driverUuid && (p.statementUuid = wp.paymentUuid)", statementUuid)
-
-	if err != nil {
-		fmt.Println(err)
-		return creditReports, err
-	}
-
-	for rows.Next() {
-		creditReport := models.CreditReport{}
-		errRow := rows.Scan(
-			&creditReport.Credit,
-			&creditReport.CashCollected,
-			&creditReport.Diff,
-			&creditReport.DriverUuid,
-			&creditReport.DriverName,
-			&creditReport.Incentives,
-			&creditReport.MiscPayment,
-			&creditReport.NetFares,
-			&creditReport.NetPayout)
-
-		if errRow != nil {
-			continue
-		}
-
-		creditReports = append(creditReports, creditReport)
-	}
-
-	return creditReports, err
-}
-
 func GetStatements() (statements []models.Statement, err error) {
-	rows, err := Get().Query("SELECT * FROM `statements` ORDER by startAt DESC")
+	rows, err := Get().Query("SELECT uuid, isPaid, currencyCode, startAt, endAt, total, timezone, hidden FROM `statements` ORDER by startAt DESC")
 
 	if err != nil {
 		return statements, err
@@ -176,4 +126,76 @@ func GetStatements() (statements []models.Statement, err error) {
 	}
 
 	return statements, err
+}
+
+func GetDriverWeeklyPayment(statementUUID string, driverUUID string) (weeklyPayment models.WeeklyPayment, err error) {
+	err = Get().QueryRow("SELECT paymentUuid, driverUuid, cashCollected, incentives, miscPayment, netFares, netPayout FROM `weekly-payments` WHERE paymentUuid = ? and driverUuid = ?", statementUUID, driverUUID).Scan(
+		&weeklyPayment.PaymentUuid,
+		&weeklyPayment.DriverUuid,
+		&weeklyPayment.CashCollected,
+		&weeklyPayment.Incentives,
+		&weeklyPayment.MiscPayment,
+		&weeklyPayment.NetFares,
+		&weeklyPayment.NetPayout)
+
+	if err != nil {
+		return weeklyPayment, err
+	}
+
+	return weeklyPayment, err
+}
+
+func GetPaymentsByStatement(statementUUID string) (payments []models.Payment, err error) {
+	rows, err := Get().Query("SELECT uuid, driverUuid, createdAt, credit, createdBy, statementUuid FROM `payments` WHERE statementUuid = ? ORDER BY createdAt DESC", statementUUID)
+
+	if err != nil {
+		return payments, err
+	}
+
+	for rows.Next() {
+		payment := models.Payment{}
+		errRow := rows.Scan(
+			&payment.PaymentUuid,
+			&payment.DriverUuid,
+			&payment.CreatedAt,
+			&payment.Credit,
+			&payment.CreatedAt,
+			&payment.StatementUuid)
+
+		if errRow != nil {
+			continue
+		}
+
+		payments = append(payments, payment)
+	}
+
+	return payments, err
+}
+
+func GetWeeklyPaymentsByStatement(statementUUID string) (payments []models.WeeklyPayment, err error) {
+	rows, err := Get().Query("SELECT paymentUuid, driverUuid, cashCollected, incentives, miscPayment, netFares, netPayout FROM `weekly-payments` WHERE paymentUuid = ?", statementUUID)
+
+	if err != nil {
+		return payments, err
+	}
+
+	for rows.Next() {
+		payment := models.WeeklyPayment{}
+		errRow := rows.Scan(
+			&payment.PaymentUuid,
+			&payment.DriverUuid,
+			&payment.CashCollected,
+			&payment.Incentives,
+			&payment.MiscPayment,
+			&payment.NetFares,
+			&payment.NetPayout)
+
+		if errRow != nil {
+			continue
+		}
+
+		payments = append(payments, payment)
+	}
+
+	return payments, err
 }

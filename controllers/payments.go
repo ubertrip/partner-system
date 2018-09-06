@@ -7,6 +7,7 @@ import (
 	"github.com/ubertrip/partner-system/models"
 	"github.com/ubertrip/partner-system/repositories"
 	"github.com/satori/go.uuid"
+	"github.com/ubertrip/partner-system/utils"
 )
 
 func UpdateWeeklyPayments(c echo.Context) error {
@@ -69,39 +70,78 @@ func AddCredit(c echo.Context) error {
 	return JsonResponseErr(c, "Cannot add payment")
 }
 
-func GetDriverCredit(c echo.Context) error {
+func GetDriverStatement(c echo.Context) error {
 	statementUuid := c.Param("statementUUID")
 	driverUuid := c.Param("driverUUID")
 
-	creditReport, err := repositories.GetDriverCreditByStatement(statementUuid, driverUuid)
+	driver, err := repositories.GetDriverByUUID(driverUuid)
 
 	if err != nil {
-		return JsonResponseErr(c, "Cannot select payments sum")
+		return JsonResponseErr(c, "Cannot select driver")
 	}
 
 	payments, err := repositories.GetDriverPaymetListByStatementId(statementUuid, driverUuid)
 
-	if err != nil {
-		return JsonResponseErr(c, "Cannot select payments list")
-	}
+	//if err != nil {
+	//	return JsonResponseErr(c, "Cannot select driver payments")
+	//}
 
-	return JsonResponseOk(c, struct {
-		Report   models.CreditReport `json:"report"`
-		Payments []models.Payment    `json:"payments"`
-	}{creditReport, payments})
+	weeklyPayment, err := repositories.GetDriverWeeklyPayment(statementUuid, driverUuid)
+
+	//if err != nil {
+	//	return JsonResponseErr(c, "Cannot select driver weekly payment")
+	//}
+
+	return JsonResponseOk(c, models.DriverSummary{
+		driver,
+		utils.CalculateweeklyPaymentforDriver(weeklyPayment, payments),
+		weeklyPayment,
+		payments})
 
 }
 
 func GetByStatement(c echo.Context) error {
 	statementUuid := c.Param("uuid")
 
-	creditReports, err := repositories.GetCreditsByStatement(statementUuid)
+	sortedPayments := make(map[string][]models.Payment)
+	sortedWeeklyPayments := make(map[string]models.WeeklyPayment)
+
+	drivers, err := repositories.GetDriversByStatus("active")
 
 	if err != nil {
-		return JsonResponseErr(c, "Cannot select payments")
+		return JsonResponseErr(c, "Cannot select drivers")
 	}
 
-	return JsonResponseOk(c, creditReports)
+	payments, err := repositories.GetPaymentsByStatement(statementUuid)
+
+	//if err != nil {
+	//	return JsonResponseErr(c, "Cannot select payments")
+	//}
+
+	for _, payment := range payments {
+		sortedPayments[payment.DriverUuid] = append(sortedPayments[payment.DriverUuid], payment)
+	}
+
+	weeklyPayments, err := repositories.GetWeeklyPaymentsByStatement(statementUuid)
+
+	//if err != nil {
+	//	return JsonResponseErr(c, "Cannot select weekly payments")
+	//}
+
+	for _, weeklyPayment := range weeklyPayments {
+		sortedWeeklyPayments[weeklyPayment.DriverUuid] = weeklyPayment
+	}
+
+	driverSummares := make([]models.DriverSummary, len(drivers))
+
+	for i, driver := range drivers {
+		driverSummares[i].Driver = driver
+		driverSummares[i].Report = utils.CalculateweeklyPaymentforDriver(sortedWeeklyPayments[driver.Uuid], sortedPayments[driver.Uuid])
+		driverSummares[i].WeeklyPayment = sortedWeeklyPayments[driver.Uuid]
+		driverSummares[i].Payments = sortedPayments[driver.Uuid]
+	}
+
+	return JsonResponseOk(c, driverSummares)
 
 }
 

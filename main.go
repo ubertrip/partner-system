@@ -29,7 +29,7 @@ func main() {
 
 	e.POST("/credit/:uuid", controllers.AddCredit) // :driverUuuid
 	e.GET("/credit/:uuid", controllers.GetByStatement) // :statementUuid
-	e.GET("/credit/:statementUUID/:driverUUID", controllers.GetDriverCredit)
+	e.GET("/credit/:statementUUID/:driverUUID", controllers.GetDriverStatement)
 
 	e.Logger.Fatal(e.Start(":"+configuration.Get().Port))
 }

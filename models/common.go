@@ -35,7 +35,7 @@ type Statement struct {
 	EndAt        string  `json:"endAt"`
 	Total        float64 `json:"total"`
 	Timezone     string  `json:"timezone"`
-	Hidden       bool    `json:"-"`
+	Hidden       bool    `json:"hidden"`
 }
 
 type CreditReport struct {
@@ -49,4 +49,16 @@ type CreditReport struct {
 	MiscPayment   float64 `json:"miscPayment"`
 	NetFares      float64 `json:"netFares"`
 	NetPayout     float64 `json:"netPayout"`
+}
+
+type PaymentsReport struct {
+	Balance float64 `json:"balance"`
+	Diff    float64 `json:"diff"`
+}
+
+type DriverSummary struct {
+	Driver        Driver         `json:"driver"`
+	Report        PaymentsReport `json:"report"`
+	WeeklyPayment WeeklyPayment  `json:"weeklyPayment"`
+	Payments      []Payment      `json:"payments"`
 }

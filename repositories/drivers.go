@@ -34,3 +34,44 @@ func GetDriverById(driverID string) (driver models.Driver, err error) {
 
 	return
 }
+
+func GetDriverByUUID(driverUUID string) (driver models.Driver, err error) {
+	err = Get().QueryRow("SELECT uuid, id, name, status, photo  FROM `drivers` WHERE uuid = ?", driverUUID).Scan(
+		&driver.Uuid,
+		&driver.ID,
+		&driver.Name,
+		&driver.Status,
+		&driver.Photo)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return
+}
+
+func GetDriversByStatus(status string) (drivers []models.Driver, err error) {
+	rows, err := Get().Query("SELECT uuid, id, name, status, photo  FROM `drivers` WHERE status = ? ORDER BY name", status)
+
+	if err != nil {
+		return drivers, err
+	}
+
+	for rows.Next() {
+		driver := models.Driver{}
+		errRow := rows.Scan(
+			&driver.Uuid,
+			&driver.ID,
+			&driver.Name,
+			&driver.Status,
+			&driver.Photo)
+
+		if errRow != nil {
+			continue
+		}
+
+		drivers = append(drivers, driver)
+	}
+
+	return drivers, err
+}
