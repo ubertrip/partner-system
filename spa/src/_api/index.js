@@ -1,0 +1,1 @@
+export {default as PaymentsApi} from './payments';

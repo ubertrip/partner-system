@@ -1,0 +1,11 @@
+.payment-item {
+  > td {
+    border-bottom: 1px dashed #333;
+    padding: 5px 10px;
+
+    > img {
+      width: 50px;
+      border-radius: 50%;
+    }
+  }
+}
