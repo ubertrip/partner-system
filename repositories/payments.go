@@ -11,14 +11,14 @@ func UpdateWeekly(payments []models.WeeklyPayment) (ok bool) {
 	str := ""
 
 	for _, payment := range payments {
-		str += "(?, ?, ?, ?, ?, ?, ?),"
+		str += "(NOW(), ?, ?, ?, ?, ?, ?, ?),"
 		values = append(values, payment.PaymentUuid, payment.DriverUuid, payment.CashCollected, payment.Incentives, payment.MiscPayment, payment.NetFares, payment.NetPayout)
 	}
 
 	str = strings.TrimRight(str, ",")
 
-	_, err := Get().Exec("INSERT INTO `weekly-payments` (paymentUuid, driverUuid, cashCollected, incentives, miscPayment, netFares, netPayout) "+
-		"VALUES "+ str+ " ON DUPLICATE KEY UPDATE cashCollected=VALUES(cashCollected), incentives=VALUES(incentives), miscPayment=VALUES(miscPayment), netFares=VALUES(netFares), netPayout=VALUES(netPayout)", values...)
+	_, err := Get().Exec("INSERT INTO `weekly-payments` (updatedAt, paymentUuid, driverUuid, cashCollected, incentives, miscPayment, netFares, netPayout) "+
+		"VALUES "+ str+ " ON DUPLICATE KEY UPDATE updatedAt=VALUES(updatedAt), cashCollected=VALUES(cashCollected), incentives=VALUES(incentives), miscPayment=VALUES(miscPayment), netFares=VALUES(netFares), netPayout=VALUES(netPayout)", values...)
 
 	if err != nil {
 		fmt.Println(err)
@@ -57,8 +57,19 @@ func UpdateStatements(statements []models.Statement) (ok bool) {
 }
 
 func AddPayment(p models.Payment) (ok bool) {
-	_, err := Get().Exec("INSERT INTO payments (uuid, driverUuid, createdBy, credit, statementUuid) VALUES (?, ?, 'system', ?, ?)",
-		p.PaymentUuid, p.DriverUuid, p.Credit, p.StatementUuid)
+	_, err := Get().Exec(`INSERT INTO payments (uuid, driverUuid, createdBy, credit, statementUuid, cashCollected, balance) 
+					VALUES (
+						?,
+						?, 
+						'system', 
+						?,
+						?, 
+						(SELECT cashCollected FROM `+"`weekly-payments`"+` WHERE paymentUuid = ? AND driverUuid = ? LIMIT 1), 
+						(SELECT bal FROM (
+							SELECT SUM(credit) as bal FROM payments WHERE  statementUuid = ? AND driverUuid = ?
+						) as b)
+					)`,
+		p.PaymentUuid, p.DriverUuid, p.Credit, p.StatementUuid, p.StatementUuid, p.DriverUuid, p.StatementUuid, p.DriverUuid)
 
 	if err != nil {
 		fmt.Println(err)
@@ -72,7 +83,7 @@ func AddPayment(p models.Payment) (ok bool) {
 }
 
 func GetDriverPaymetListByStatementId(statementUuid string, driverUuid string) (payments []models.Payment, err error) {
-	rows, err := Get().Query("SELECT uuid, credit, driverUuid, createdAt, createdBy, statementUuid FROM `payments` WHERE statementUuid = ? and driverUuid = ? ORDER BY createdAt DESC", statementUuid, driverUuid)
+	rows, err := Get().Query("SELECT uuid, credit, driverUuid, createdAt, createdBy, statementUuid, cashCollected, balance FROM `payments` WHERE statementUuid = ? AND driverUuid = ? ORDER BY createdAt DESC", statementUuid, driverUuid)
 
 	if err != nil {
 		fmt.Println(err)
@@ -87,7 +98,9 @@ func GetDriverPaymetListByStatementId(statementUuid string, driverUuid string) (
 			&payment.DriverUuid,
 			&payment.CreatedAt,
 			&payment.CreatedBy,
-			&payment.StatementUuid)
+			&payment.StatementUuid,
+			&payment.CashCollected,
+			&payment.Balance)
 
 		if errRow != nil {
 			continue
@@ -129,14 +142,15 @@ func GetStatements() (statements []models.Statement, err error) {
 }
 
 func GetDriverWeeklyPayment(statementUUID string, driverUUID string) (weeklyPayment models.WeeklyPayment, err error) {
-	err = Get().QueryRow("SELECT paymentUuid, driverUuid, cashCollected, incentives, miscPayment, netFares, netPayout FROM `weekly-payments` WHERE paymentUuid = ? and driverUuid = ?", statementUUID, driverUUID).Scan(
+	err = Get().QueryRow("SELECT paymentUuid, driverUuid, cashCollected, incentives, miscPayment, netFares, netPayout, updatedAt FROM `weekly-payments` WHERE paymentUuid = ? and driverUuid = ?", statementUUID, driverUUID).Scan(
 		&weeklyPayment.PaymentUuid,
 		&weeklyPayment.DriverUuid,
 		&weeklyPayment.CashCollected,
 		&weeklyPayment.Incentives,
 		&weeklyPayment.MiscPayment,
 		&weeklyPayment.NetFares,
-		&weeklyPayment.NetPayout)
+		&weeklyPayment.NetPayout,
+		&weeklyPayment.UpdatedAt)
 
 	if err != nil {
 		return weeklyPayment, err
@@ -146,7 +160,7 @@ func GetDriverWeeklyPayment(statementUUID string, driverUUID string) (weeklyPaym
 }
 
 func GetPaymentsByStatement(statementUUID string) (payments []models.Payment, err error) {
-	rows, err := Get().Query("SELECT uuid, driverUuid, createdAt, credit, createdBy, statementUuid FROM `payments` WHERE statementUuid = ? ORDER BY createdAt DESC", statementUUID)
+	rows, err := Get().Query("SELECT uuid, driverUuid, createdAt, credit, createdBy, statementUuid, cashCollected, balance FROM `payments` WHERE statementUuid = ? ORDER BY createdAt DESC", statementUUID)
 
 	if err != nil {
 		return payments, err
@@ -160,7 +174,9 @@ func GetPaymentsByStatement(statementUUID string) (payments []models.Payment, er
 			&payment.CreatedAt,
 			&payment.Credit,
 			&payment.CreatedAt,
-			&payment.StatementUuid)
+			&payment.StatementUuid,
+			&payment.CashCollected,
+			&payment.Balance)
 
 		if errRow != nil {
 			continue
@@ -173,7 +189,7 @@ func GetPaymentsByStatement(statementUUID string) (payments []models.Payment, er
 }
 
 func GetWeeklyPaymentsByStatement(statementUUID string) (payments []models.WeeklyPayment, err error) {
-	rows, err := Get().Query("SELECT paymentUuid, driverUuid, cashCollected, incentives, miscPayment, netFares, netPayout FROM `weekly-payments` WHERE paymentUuid = ?", statementUUID)
+	rows, err := Get().Query("SELECT paymentUuid, driverUuid, cashCollected, incentives, miscPayment, netFares, netPayout, updatedAt FROM `weekly-payments` WHERE paymentUuid = ?", statementUUID)
 
 	if err != nil {
 		return payments, err
@@ -188,7 +204,8 @@ func GetWeeklyPaymentsByStatement(statementUUID string) (payments []models.Weekl
 			&payment.Incentives,
 			&payment.MiscPayment,
 			&payment.NetFares,
-			&payment.NetPayout)
+			&payment.NetPayout,
+			&payment.UpdatedAt)
 
 		if errRow != nil {
 			continue
@@ -198,4 +215,22 @@ func GetWeeklyPaymentsByStatement(statementUUID string) (payments []models.Weekl
 	}
 
 	return payments, err
+}
+
+func GetStatementByUUID(statementUUID string) (statement models.Statement, err error) {
+	err = Get().QueryRow("SELECT uuid, isPaid, currencyCode, startAt, endAt, total, timezone, hidden FROM `statements` WHERE uuid = ? LIMIT 1", statementUUID).Scan(
+		&statement.Uuid,
+		&statement.IsPaid,
+		&statement.CurrencyCode,
+		&statement.StartAt,
+		&statement.EndAt,
+		&statement.Total,
+		&statement.Timezone,
+		&statement.Hidden)
+
+	if err != nil {
+		return statement, err
+	}
+
+	return statement, err
 }

@@ -4,9 +4,12 @@ import {
   PAYMENT_SET_STATEMENT_UUID,
 } from './reducer'
 
+import {toggleLoading} from '../../_reducer'
+
 import {PaymentsApi} from '../../_api';
 
 export const loadPayments = (statementUUID) => (dispatch) => {
+  dispatch(toggleLoading(true, 'Payments'));
   return PaymentsApi.getPaymentsByStatementUUID(statementUUID).then(({data}) => {
     if(data.status === 'ok') {
       dispatch({
@@ -14,10 +17,13 @@ export const loadPayments = (statementUUID) => (dispatch) => {
         list: data.result,
       });
     }
+
+    dispatch(toggleLoading(false));
   })
 };
 
 export const loadStatements = () => (dispatch) => {
+  dispatch(toggleLoading(true, 'Statements'));
   return PaymentsApi.getStatements().then(({data}) => {
     if(data.status === 'ok') {
       dispatch({
@@ -25,6 +31,10 @@ export const loadStatements = () => (dispatch) => {
         statements: data.result,
       });
     }
+
+    dispatch(toggleLoading(false));
+
+    return data.result;
   })
 };
 

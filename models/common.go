@@ -8,15 +8,18 @@ type WeeklyPayment struct {
 	MiscPayment   float64 `json:"miscPayment"`   // возврат средств
 	NetFares      float64 `json:"netFares"`      // общая сумма
 	NetPayout     float64 `json:"netPayout"`     // безнал
+	UpdatedAt     string  `json:"updatedAt"`
 }
 
 type Payment struct {
 	DriverUuid    string  `json:"driverUuid"`
 	PaymentUuid   string  `json:"paymentUuid"`
 	StatementUuid string  `json:"statementUuid"`
-	CreatedAt     string
-	CreatedBy     string
+	CreatedAt     string  `json:"createdAt"`
+	CreatedBy     string  `json:"createdBy"`
 	Credit        float64 `json:"credit"`
+	CashCollected float64 `json:"cashCollected"`
+	Balance       float64 `json:"balance"`
 }
 
 type Driver struct {
@@ -61,4 +64,5 @@ type DriverSummary struct {
 	Report        PaymentsReport `json:"report"`
 	WeeklyPayment WeeklyPayment  `json:"weeklyPayment"`
 	Payments      []Payment      `json:"payments"`
+	Statement     Statement      `json:"statement"`
 }

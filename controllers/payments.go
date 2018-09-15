@@ -74,6 +74,12 @@ func GetDriverStatement(c echo.Context) error {
 	statementUuid := c.Param("statementUUID")
 	driverUuid := c.Param("driverUUID")
 
+	statement, err := repositories.GetStatementByUUID(statementUuid)
+
+	if err != nil {
+		return JsonResponseErr(c, "Not found statement")
+	}
+
 	driver, err := repositories.GetDriverByUUID(driverUuid)
 
 	if err != nil {
@@ -96,7 +102,8 @@ func GetDriverStatement(c echo.Context) error {
 		driver,
 		utils.CalculateweeklyPaymentforDriver(weeklyPayment, payments),
 		weeklyPayment,
-		payments})
+		payments,
+		statement})
 
 }
 
