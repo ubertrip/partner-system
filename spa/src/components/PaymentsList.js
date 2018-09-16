@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 import './PaymentList.scss';
 import moment from 'moment';
+import {calcDriverSalary} from '../utils';
 
 export default class PaymentsList extends Component {
   checkUptime = d => {
@@ -23,6 +24,7 @@ export default class PaymentsList extends Component {
           <th>ID</th>
           <th><i>Баланс</i></th>
           <th colSpan={2}><i>Разница</i></th>
+          <th>Зарплата</th>
           <th>Тарифы без налогов и сборов</th>
           <th>Бонусы</th>
           <th>Платеж категории "Прочее"</th>
@@ -36,14 +38,15 @@ export default class PaymentsList extends Component {
           <td><Link to={`/credit/${this.props.statementUUID}/${p.driver.uuid}/add`}>{p.driver.name}</Link></td>
           <td>{this.checkUptime(p.weeklyPayment.updatedAt)}</td>
           <td><b>{p.driver.id}</b></td>
-          <td>{p.report.balance}</td>
-          <td>{p.report.diff >= 1 ? <b style={{color: 'red'}}>{p.report.diff.toFixed(2)}</b> : <b style={{color: 'green'}}>{p.report.diff.toFixed(2)}</b> }</td>
+          <td>₴{p.report.balance}</td>
+          <td>₴{p.report.diff >= 1 ? <b style={{color: 'red'}}>{p.report.diff.toFixed(2)}</b> : <b style={{color: 'green'}}>{p.report.diff.toFixed(2)}</b> }</td>
           <td>{p.report.diff >= 1 ? <Link to={`/credit/${this.props.statementUUID}/${p.driver.uuid}/add`}>Оплатить</Link> : null}</td>
-          <td>{p.weeklyPayment.netFares}</td>
-          <td>{p.weeklyPayment.incentives}</td>
-          <td>{p.weeklyPayment.miscPayment}</td>
-          <td>{p.weeklyPayment.cashCollected}</td>
-          <td>{p.weeklyPayment.netPayout}</td>
+          <td style={{color: 'violet'}}>₴{calcDriverSalary(p)}</td>
+          <td>₴{p.weeklyPayment.netFares}</td>
+          <td>₴{p.weeklyPayment.incentives}</td>
+          <td>₴{p.weeklyPayment.miscPayment}</td>
+          <td>₴{p.weeklyPayment.cashCollected}</td>
+          <td>₴{p.weeklyPayment.netPayout}</td>
         </tr>)}
         </tbody>
       </table>

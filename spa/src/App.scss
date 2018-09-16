@@ -26,8 +26,6 @@
 .driver-payments {
   border: 1px solid #333;
   border-top: none;
-  margin: 0 auto;
-  width: 900px;
   padding: 5px 10px;
 
   &__photo {
@@ -36,13 +34,20 @@
 }
 
 .driver-payments-list {
+
   table {
+    width: 100%;
 
     th, td {
       text-align: left;
       padding: 5px 20px;
     }
   }
+}
+
+.driver-weekly-table {
+  overflow: hidden;
+  overflow-x: auto;
 }
 
 .serach-driver {
@@ -57,4 +62,37 @@
     margin-top: 10px;
     padding: 10px 15px;
   }
+}
+
+.weekly-dashboard {
+  background: #f1f1f1;
+  border: 1px dashed #333;
+  padding: 10px 15px;
+
+  table {
+    width: auto;
+  }
+
+  .table td, .table th, table td, table th {
+    padding: 0;
+  }
+
+  .progress {
+    &-low {
+      color: red;
+    }
+
+    &-mid {
+      color: orange;
+    }
+
+    &-ok {
+      color: forestgreen;
+    }
+  }
+}
+
+.payments-list {
+  overflow: hidden;
+  overflow-x: auto;
 }

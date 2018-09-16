@@ -25,7 +25,7 @@ class CSearchByDriverID extends Component {
       </form>
 
       <p>
-        <i>Для поиска введите последние 5 цифру казанные на вашей топливной карте</i>
+        <i>Для поиска введите последние 5 цифр указанные на вашей топливной карте</i>
         <img width={250} src="/assets/card.jpg" alt="card"/>
       </p>
     </div>;

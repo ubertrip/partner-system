@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {loadPayments, loadStatements, onChangeStatementUUID, changeStatement} from './actions'
 import PaymentsList from '../../components/PaymentsList'
+import WeeklyDashboard from '../../components/WeeklyDashboard'
 import {StatementSelect} from '../../components/StatementSelect';
 
 class Index extends Component {
@@ -24,6 +25,10 @@ class Index extends Component {
         statements={this.props.statements}
         onChange={this.onChangeStatementUUID}
         value={this.props.statementUUID}
+      />
+
+      <WeeklyDashboard
+        payments={this.props.payments}
       />
 
       <PaymentsList
