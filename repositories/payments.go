@@ -66,7 +66,7 @@ func AddPayment(p models.Payment) (ok bool) {
 						?, 
 						(SELECT cashCollected FROM `+"`weekly-payments`"+` WHERE paymentUuid = ? AND driverUuid = ? LIMIT 1), 
 						(SELECT bal FROM (
-							SELECT SUM(credit) as bal FROM payments WHERE  statementUuid = ? AND driverUuid = ?
+							SELECT IFNULL(SUM(credit), 0) as bal FROM payments WHERE  statementUuid = ? AND driverUuid = ?
 						) as b)
 					)`,
 		p.PaymentUuid, p.DriverUuid, p.Credit, p.StatementUuid, p.StatementUuid, p.DriverUuid, p.StatementUuid, p.DriverUuid)
