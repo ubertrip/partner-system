@@ -73,7 +73,10 @@ class CPayment extends Component {
         <h4>Данные за
           период: {moment(this.props.statement.startAt).format('DD.MM.YYYY')} - {moment(this.props.statement.endAt).format('DD.MM.YYYY')}</h4>
 
-        <h2 style={{marginBottom: 0}}>Сумма к выплате: <b style={{color: 'violet'}}>₴{calcDriverSalary({weeklyPayment, report})}</b></h2>
+        <h2 style={{marginBottom: 0}}>Сумма к выплате: <b style={{color: 'violet'}}>₴{calcDriverSalary({
+          weeklyPayment,
+          report
+        })}</b></h2>
         <small>* данная сумма примерный расчет выплаты и может быть изменена</small>
 
         <div style={{marginTop: 10}}>
@@ -85,7 +88,7 @@ class CPayment extends Component {
             <tbody>
             <tr>
               <td>Обновлено:</td>
-              <td>{moment(weeklyPayment.updatedAt).format('DD.MM.YYYY HH:mm')}</td>
+              <td>{moment(weeklyPayment.updatedAt).isValid() ? moment(weeklyPayment.updatedAt).format('DD.MM.YYYY HH:mm') : '-'}</td>
             </tr>
             <tr>
               <td>ID:</td>
