@@ -46,10 +46,10 @@ export const loadDriverPayments = (statementUUID, driverUUID) => (dispatch) => {
   })
 };
 
-export const addPayment = (statementUUID, driverUUID, diff) => (dispatch) => {
+export const addPayment = (statementUUID, driverUUID, diff, comment, gas, petrol) => (dispatch) => {
   dispatch(toggleLoading(true, 'Adding payment...'));
 
-  return PaymentsApi.addPayment(statementUUID, driverUUID, diff).then(({data}) => {
+  return PaymentsApi.addPayment(statementUUID, driverUUID, diff, comment, gas, petrol).then(({data}) => {
     if (data.status === 'ok') {
       loadDriverPayments(statementUUID, driverUUID)(dispatch);
     }

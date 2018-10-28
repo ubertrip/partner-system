@@ -57,19 +57,22 @@ func UpdateStatements(statements []models.Statement) (ok bool) {
 }
 
 func AddPayment(p models.Payment) (ok bool) {
-	_, err := Get().Exec(`INSERT INTO payments (uuid, driverUuid, createdBy, credit, statementUuid, cashCollected, balance) 
+	_, err := Get().Exec(`INSERT INTO payments (uuid, driverUuid, createdBy, credit, statementUuid, cashCollected, balance, extra, gas, petrol) 
 					VALUES (
 						?,
 						?, 
 						'system', 
 						?,
 						?, 
-						(SELECT cashCollected FROM `+"`weekly-payments`"+` WHERE paymentUuid = ? AND driverUuid = ? LIMIT 1), 
+						(SELECT cashCollected FROM `+ "`weekly-payments`"+ ` WHERE paymentUuid = ? AND driverUuid = ? LIMIT 1), 
 						(SELECT bal FROM (
 							SELECT IFNULL(SUM(credit), 0) as bal FROM payments WHERE  statementUuid = ? AND driverUuid = ?
-						) as b)
+						) as b)+credit,
+						?,
+						?,
+						?
 					)`,
-		p.PaymentUuid, p.DriverUuid, p.Credit, p.StatementUuid, p.StatementUuid, p.DriverUuid, p.StatementUuid, p.DriverUuid)
+		p.PaymentUuid, p.DriverUuid, p.Credit, p.StatementUuid, p.StatementUuid, p.DriverUuid, p.StatementUuid, p.DriverUuid, p.Extra, p.Gas, p.Petrol)
 
 	if err != nil {
 		fmt.Println(err)
@@ -83,7 +86,7 @@ func AddPayment(p models.Payment) (ok bool) {
 }
 
 func GetDriverPaymetListByStatementId(statementUuid string, driverUuid string) (payments []models.Payment, err error) {
-	rows, err := Get().Query("SELECT uuid, credit, driverUuid, createdAt, createdBy, statementUuid, cashCollected, balance FROM `payments` WHERE statementUuid = ? AND driverUuid = ? ORDER BY createdAt DESC", statementUuid, driverUuid)
+	rows, err := Get().Query("SELECT uuid, credit, driverUuid, createdAt, createdBy, statementUuid, cashCollected, balance, extra, gas, petrol FROM `payments` WHERE statementUuid = ? AND driverUuid = ? ORDER BY createdAt DESC", statementUuid, driverUuid)
 
 	if err != nil {
 		fmt.Println(err)
@@ -100,7 +103,10 @@ func GetDriverPaymetListByStatementId(statementUuid string, driverUuid string) (
 			&payment.CreatedBy,
 			&payment.StatementUuid,
 			&payment.CashCollected,
-			&payment.Balance)
+			&payment.Balance,
+			&payment.Extra,
+			&payment.Gas,
+			&payment.Petrol)
 
 		if errRow != nil {
 			continue
@@ -160,7 +166,7 @@ func GetDriverWeeklyPayment(statementUUID string, driverUUID string) (weeklyPaym
 }
 
 func GetPaymentsByStatement(statementUUID string) (payments []models.Payment, err error) {
-	rows, err := Get().Query("SELECT uuid, driverUuid, createdAt, credit, createdBy, statementUuid, cashCollected, balance FROM `payments` WHERE statementUuid = ? ORDER BY createdAt DESC", statementUUID)
+	rows, err := Get().Query("SELECT uuid, driverUuid, createdAt, credit, createdBy, statementUuid, cashCollected, balance, extra, gas, petrol FROM `payments` WHERE statementUuid = ? ORDER BY createdAt DESC", statementUUID)
 
 	if err != nil {
 		return payments, err
@@ -176,7 +182,10 @@ func GetPaymentsByStatement(statementUUID string) (payments []models.Payment, er
 			&payment.CreatedAt,
 			&payment.StatementUuid,
 			&payment.CashCollected,
-			&payment.Balance)
+			&payment.Balance,
+			&payment.Extra,
+			&payment.Gas,
+			&payment.Petrol)
 
 		if errRow != nil {
 			continue

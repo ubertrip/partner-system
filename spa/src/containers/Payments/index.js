@@ -21,11 +21,13 @@ class Index extends Component {
 
   render() {
     return <div>
-      <StatementSelect
-        statements={this.props.statements}
-        onChange={this.onChangeStatementUUID}
-        value={this.props.statementUUID}
-      />
+      <div style={{padding: '10px 5px'}}>
+        <StatementSelect
+          statements={this.props.statements}
+          onChange={this.onChangeStatementUUID}
+          value={this.props.statementUUID}
+        />
+      </div>
 
       <WeeklyDashboard
         payments={this.props.payments}

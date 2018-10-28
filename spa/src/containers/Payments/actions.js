@@ -3,10 +3,9 @@ import {
   PAYMENTS_LOAD_STATEMENTS,
   PAYMENT_SET_STATEMENT_UUID,
 } from './reducer'
-
 import {toggleLoading} from '../../_reducer'
-
 import {PaymentsApi} from '../../_api';
+import {history} from '../../store';
 
 export const loadPayments = (statementUUID) => (dispatch) => {
   dispatch(toggleLoading(true, 'Payments'));
@@ -44,7 +43,13 @@ export const changeStatement = statementUUID => (dispatch, getState) => {
   })
 };
 
-export const onChangeStatementUUID = statementUUID => ({
-  type: PAYMENT_SET_STATEMENT_UUID,
-  statementUUID,
-});
+export const onChangeStatementUUID = (statementUUID, driverUUID, toEdit) => (dispatch) => {
+  dispatch({
+    type: PAYMENT_SET_STATEMENT_UUID,
+    statementUUID,
+  });
+
+  if(driverUUID) {
+    history.push(`/credit/${statementUUID}/${driverUUID}${toEdit ? '/add' : ''}`);
+  }
+};

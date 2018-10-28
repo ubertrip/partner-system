@@ -13,8 +13,14 @@ export default class {
     return Server.get(`credit/${statementUUID}/${driverUUID}`);
   }
 
-  static addPayment(statementUuid, driverUUID, credit) {
-    return Server.post(`credit/${driverUUID}`, {statementUuid, credit: parseFloat(credit)});
+  static addPayment(statementUuid, driverUUID, credit, extra, gas = 0, petrol = 0) {
+    return Server.post(`credit/${driverUUID}`, {
+      statementUuid,
+      credit: parseFloat(credit),
+      extra,
+      gas: parseFloat(gas),
+      petrol: parseFloat(petrol),
+    });
   }
 
   static getDriverByID(id) {
