@@ -8,7 +8,7 @@ export default class WeeklyDashboard extends Component {
     totalPercentEarn: 0,
     incentives: 0,
     additional: 0,
-    driversCount: 7,
+    driversCount: 6,
     fixedWeeklyEarn: 0,
     fuel: 0,
     gas: 0,
@@ -86,7 +86,7 @@ export default class WeeklyDashboard extends Component {
 
         <tr>
           <td>Чистая сумма оплаты:</td>
-          <td><b>₴{this.state.netPayout.toFixed(2)}</b></td>
+          <td><b>₴{this.state.netPayout.toFixed(2)}</b> <small>₴{(this.state.netPayout -  (this.state.netFares * 0.4 + this.state.incentives * 0.7) ).toFixed(2)} прибыль партнера с безнала не учитывая нал</small></td>
         </tr>
 
         <tr>

@@ -102,7 +102,7 @@ class CPayment extends Component {
       this.state.gas,
       this.state.petrol
     ).then(() => {
-      this.setState({diff: 0, extra: ''});
+      this.setState({diff: 0, extra: '', gas: '', petrol: ''});
     })
   };
 
