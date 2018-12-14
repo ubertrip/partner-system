@@ -100,7 +100,13 @@
     "extends": "react-app"
   },
   "devDependencies": {
+    "babel-install": "2.1.0",
     "node-sass": "^4.9.3",
     "sass-loader": "^7.1.0"
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

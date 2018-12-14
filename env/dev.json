@@ -4,7 +4,7 @@
     "port": "3306",
     "host": "localhost",
     "user": "root",
-    "password": "WxY7!mno",
+    "password": "",
     "schema": "partner-system"
   }
 }

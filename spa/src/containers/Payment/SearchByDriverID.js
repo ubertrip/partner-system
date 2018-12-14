@@ -19,9 +19,9 @@ class CSearchByDriverID extends Component {
   render() {
     return <div className="serach-driver">
       <h3>Просмотр платежей</h3>
-      <form onSubmit={this.search}>
+      <form onSubmit={this.search}>      
         <input type="number" autoFocus onChange={this.setID} placeholder="Введите идентификатор"/><br/>
-        <button type="submit">Найти</button>
+        <button type="submit">Найти</button>      
       </form>
 
       <p>

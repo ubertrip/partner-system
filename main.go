@@ -6,6 +6,7 @@ import (
 	"github.com/ubertrip/partner-system/repositories"
 	"github.com/labstack/echo/middleware"
 	configuration "github.com/ubertrip/partner-system/config"
+	
 )
 
 func main() {
@@ -13,13 +14,17 @@ func main() {
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
-		AllowMethods:  []string{"GET", "POSt", "PUT", "DELETE", "OPTIONS"},
+		AllowMethods:  []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	}))
 
 	repositories.InitDB()
 
 	e.GET("/", controllers.Info)
+
+	e.GET("/login", controllers.Login)
+	e.POST("/login", controllers.Login)
+
 	e.POST("/payments", controllers.UpdateWeeklyPayments)
 	e.POST("/statements", controllers.UpdateWeeklyStatements)
 	e.PUT("/drivers/:id", controllers.UpdateDriver) // :driverUUID
