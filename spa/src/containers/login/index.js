@@ -31,9 +31,9 @@ const LoginForm = props => <div className="wrapper serach-driver">
 export default class PLogin extends React.Component {
   constructor(props){
     super(props)
-    this.state = {login: '123', password: '123', router: null};
+    this.state = {login: '', password: '', router: null};
   }
-	// state = {login: '123', password: '123', router: null};
+
 
 	onSendForm = e => {
 		e.preventDefault();
