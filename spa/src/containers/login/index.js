@@ -1,6 +1,7 @@
 import React  from 'react';
 // import PServer from './driver';
 import axios from 'axios';
+import { Redirect } from 'react-router';
 
 
 const LoginForm = props => <div className="wrapper serach-driver">
@@ -28,7 +29,11 @@ const LoginForm = props => <div className="wrapper serach-driver">
 
 
 export default class PLogin extends React.Component {
-	state = {login: '', password: ''};
+  constructor(props){
+    super(props)
+    this.state = {login: '123', password: '123', router: null};
+  }
+	// state = {login: '123', password: '123', router: null};
 
 	onSendForm = e => {
 		e.preventDefault();
@@ -39,14 +44,29 @@ export default class PLogin extends React.Component {
     	return;
     }
 
-    // в этом месте отправляем на сервер
-    axios.post("http://localhost:4321/login",{
-      login: this.state.login,
-      password: this.state.password,     
-    })
-    
-    return false;
+      // в этом месте отправляем на сервер    
+      axios.post("http://localhost:4321/login",{
+        login: this.state.login,
+        password: this.state.password,
+      })
+      
+      .then(({data}) => {
+        if (data.status) {
+          console.log('if is works', data);
+          this.setState({
+            router: <Redirect to="/driver" push />
+          })
+        }else{
+          alert('Login Please');
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
   };
+
+
 
 
 
@@ -64,6 +84,7 @@ export default class PLogin extends React.Component {
         sendForm={this.onSendForm}
         setProp={this.onSetProp}
       />
+      {this.state.router}
     </div>;
   }
 };

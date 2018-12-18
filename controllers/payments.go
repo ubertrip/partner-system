@@ -88,15 +88,11 @@ func GetDriverStatement(c echo.Context) error {
 
 	payments, err := repositories.GetDriverPaymetListByStatementId(statementUuid, driverUuid)
 
-	//if err != nil {
-	//	return JsonResponseErr(c, "Cannot select driver payments")
-	//}
+	
 
 	weeklyPayment, err := repositories.GetDriverWeeklyPayment(statementUuid, driverUuid)
 
-	//if err != nil {
-	//	return JsonResponseErr(c, "Cannot select driver weekly payment")
-	//}
+
 
 	return JsonResponseOk(c, models.DriverSummary{
 		driver,
@@ -121,9 +117,7 @@ func GetByStatement(c echo.Context) error {
 
 	payments, err := repositories.GetPaymentsByStatement(statementUuid)
 
-	//if err != nil {
-	//	return JsonResponseErr(c, "Cannot select payments")
-	//}
+
 
 	for _, payment := range payments {
 		sortedPayments[payment.DriverUuid] = append(sortedPayments[payment.DriverUuid], payment)
@@ -131,9 +125,7 @@ func GetByStatement(c echo.Context) error {
 
 	weeklyPayments, err := repositories.GetWeeklyPaymentsByStatement(statementUuid)
 
-	//if err != nil {
-	//	return JsonResponseErr(c, "Cannot select weekly payments")
-	//}
+
 
 	for _, weeklyPayment := range weeklyPayments {
 		sortedWeeklyPayments[weeklyPayment.DriverUuid] = weeklyPayment

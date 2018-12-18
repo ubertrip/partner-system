@@ -52,13 +52,11 @@ func InitDB() {
 }
 
 func GetUserByLogin(login, password string) bool {
-	// a := login 
-	// b := password
+
 	err := Get().QueryRow("SELECT login, password FROM `users` WHERE login=? and password=?", login, password).Scan(		
 		&login,
 		&password)
-	// err := Get().QueryRow("SELECT password FROM users WHERE name=?", login).Scan(&password)
-	// fmt.Println(err)
+	
 	if err != nil {
 		fmt.Println(err)
 		
@@ -68,23 +66,6 @@ func GetUserByLogin(login, password string) bool {
 	return true
 }
 
-// func Login() {
-// 	fmt.Println(">>", GetUserByLogin("123", "123"))
-// 	}
-
 func Get() *sql.DB {
 	return atomicDB.Load().(*sql.DB)
 }
-
-// hc := http.Client{}
-// req, err := http.NewRequest("POST", url, strings.NewReader(form.Encode()))
-
-//     form := url.Values{}
-//     form.Add("ln", c.ln)
-//     form.Add("ip", c.ip)
-//     form.Add("ua", c.ua)
-//     req.PostForm = form
-//     req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-
-//     glog.Info("form was %v", form)
-//     resp, err := hc.Do(req)
