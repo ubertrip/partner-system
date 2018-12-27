@@ -2,6 +2,8 @@ import React  from 'react';
 // import PServer from './driver';
 import axios from 'axios';
 import { Redirect } from 'react-router';
+import { isAuth } from '../../_reducer'
+import { connect } from 'react-redux';
 
 
 const LoginForm = props => <div className="wrapper serach-driver">
@@ -28,10 +30,10 @@ const LoginForm = props => <div className="wrapper serach-driver">
 
 
 
-export default class PLogin extends React.Component {
+class Login extends React.Component {
   constructor(props){
     super(props)
-    this.state = {login: '', password: '', router: null};
+    this.state = {login: '', password: '', isLoading: false, loadingMessage: '', router: null};
   }
 
 
@@ -44,31 +46,29 @@ export default class PLogin extends React.Component {
     	return;
     }
 
-      // в этом месте отправляем на сервер    
-      axios.post("http://localhost:4321/login",{
-        login: this.state.login,
-        password: this.state.password,
-      })
-      
-      .then(({data}) => {
-        if (data.status) {
-          console.log('if is works', data);
-          this.setState({
-            router: <Redirect to="/driver" push />
-          })
-        }else{
-          alert('Login Please');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    // в этом месте отправляем на сервер    
+    axios.post("http://localhost:4321/login",{
+      login: this.state.login,
+      password: this.state.password,
+    })
+    
+    // return PaymentsApi.getLoginForm(login, password)
+    .then(({data}) => {
+      if (data.status === 'ok') {
+        console.log('if is works', data);
+        this.props.isAuth(true);
+        this.setState({
+          router: <Redirect to="/payments" push />
+        })       
+      }
+    })
+    .catch((error) => {
+      this.props.isAuth(false)
+      console.log(error);
+      return alert("Cannot found user");
+    });
 
   };
-
-
-
-
 
   onSetProp = (prop, e) => {
   	const value = e.target.value;
@@ -88,4 +88,7 @@ export default class PLogin extends React.Component {
     </div>;
   }
 };
+
+
+export default connect(null,{isAuth})(Login)
 

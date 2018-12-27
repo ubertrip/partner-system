@@ -26,4 +26,8 @@ export default class {
   static getDriverByID(id) {
     return Server.get(`drivers/${id}`);
   }
+
+  static getLoginForm (login, password){
+    return Server.get(`driver/${login}/${password}`);
+  }
 }

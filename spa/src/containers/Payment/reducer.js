@@ -29,7 +29,7 @@ export default (state = initialState, action) => {
 
 
 export const loadDriverPayments = (statementUUID, driverUUID) => (dispatch) => {
-  dispatch(toggleLoading(true, 'DriverpPayments'));
+  dispatch(toggleLoading(true, 'Driver Payments'));
   return PaymentsApi.getDriverPayments(statementUUID, driverUUID).then(({data}) => {
     if (data.status === 'ok') {
       dispatch({
@@ -63,7 +63,6 @@ export const getDriver = (id) => (dispatch) => {
 
   return PaymentsApi.getDriverByID(id).then(({data}) => {
     if (data.status === 'ok') {
-
       loadStatements()(dispatch).then(response => {
         if (data.status === 'ok') {
          if(response.length) {

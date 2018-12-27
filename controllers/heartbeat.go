@@ -3,7 +3,7 @@ package controllers
 import (
 	"github.com/labstack/echo"
 	// "fmt"
-	"net/http"
+	// "net/http"
 	"encoding/json"
 	// "github.com\ubertrip\partner-system\controllers"
 	"github.com/ubertrip/partner-system/repositories"
@@ -23,6 +23,11 @@ type LoginForm struct {
 	Password string `json:"password" form:"password" query:"password"`
 }
 
+type Menu struct {
+	Menu  string `json:"Menu" `
+	
+}
+
 type LoginStatus struct {
 	Status bool `json:"status"`
 }
@@ -33,7 +38,14 @@ func Login(c echo.Context) error {
 	json.NewDecoder(c.Request().Body).Decode(&loginForm)
 
 	var resp LoginStatus
+
 	resp.Status = repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
+
+	err := repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
+
+	if !err {
+		return JsonResponseErr(c, err)
+	}
 	
-	return c.JSON(http.StatusOK, resp)
+	return JsonResponseOk(c, resp)
 }
