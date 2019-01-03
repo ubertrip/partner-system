@@ -24,7 +24,8 @@ export default (state = initialState, action) => {
 
         return{
           ...state,
-          isAuth: action.value
+          isAuth: action.value,
+          loadingMessage: action.text
         }
 
     default:

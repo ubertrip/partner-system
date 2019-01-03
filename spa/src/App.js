@@ -35,7 +35,7 @@ class App extends Component {
           <Route exact path="/test" component ={test}/>
           <Route exact path="/driver" component={CSearchByDriverID}/>
           <Route exact path="/credit/:statementUUID/:driverUUID/:mode" component={requireAuthentication(CPayment)}/>
-          <Route exact path="/credit/:statementUUID/:driverUUID" component={CPayment}/>
+          <Route exact path="/credit/:statementUUID/:driverUUID" component={requireAuthentication(CPayment)}/>
           {/* <Route exact path="/admin" component={requireAuthentication(Payments)}/> */}
           <Route exact path="/auth" component={Menu} />
           <Route exact path="/auth" component={Link} />

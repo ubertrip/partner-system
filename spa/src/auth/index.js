@@ -1,31 +1,33 @@
 
 import './auth.scss';
 import React  from 'react';
+import {Link} from 'react-router-dom';  
+// import axios from 'axios';
+
 
 
 export default class Menu extends React.Component {
-    render () {
-        let menus = [
+    constructor(props){
+    super(props)
+    this.state = {
+         menus : [
             "auth",
             "login",
             "driver",
             "payments"
-        ]
-        return <div>
-            {menus.map((value, index)=>{
-                //  return console.log(value)
-                return <div key={index}><Link label={value} /></div>
+        ]}
+    }
+        
 
-
-            })}
+        render () {
+        return <div className="menu">
+            {this.state.menus.map((value, index)=>{
+                return <div key={index}>
+                    <Link to={value}>{value}</Link>
+                </div> 
+                })}
         </div>
+
     }
-}
-class Link extends React.Component {
-    render(){
-    const url ="/" + this.props.label;
-    return <div>        
-        <a href={url}>{this.props.label}</a>
-    </div>
-    }
+    
 }

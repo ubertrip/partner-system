@@ -1,7 +1,7 @@
 body {
     background: #f9f9f9;
     font-family: 'Open Sans', sans-serif;
-    text-align: center;
+    /* text-align: center; */
   }
   
   #container {
@@ -89,4 +89,8 @@ body {
     left: 10px;
     bottom: 10px;
     width: calc(100% - 20px);
+  }
+
+  .menu {
+    text-align: center;
   }

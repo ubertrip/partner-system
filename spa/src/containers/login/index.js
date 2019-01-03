@@ -33,7 +33,7 @@ const LoginForm = props => <div className="wrapper serach-driver">
 class Login extends React.Component {
   constructor(props){
     super(props)
-    this.state = {login: '', password: '', isLoading: false, loadingMessage: '', router: null};
+    this.state = {login: '123', password: '123', isLoading: false, loadingMessage: '', router: null};
   }
 
 
