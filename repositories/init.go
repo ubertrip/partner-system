@@ -7,6 +7,7 @@ import (
 	"os"
 	"fmt"
 	configuration "github.com/ubertrip/partner-system/config"
+	"golang.org/x/crypto/bcrypt"
 	
 )
 
@@ -53,11 +54,6 @@ func InitDB() {
 
 func GetUserByLogin(login, password string) bool {
 
-<<<<<<< auth
-	err := Get().QueryRow("SELECT login, password FROM `users` WHERE login=? and password=?", login, password).Scan(		
-		&login,
-		&password)
-=======
 
 
 	hash := ""
@@ -69,7 +65,6 @@ func GetUserByLogin(login, password string) bool {
 		fmt.Println(password, hash)
 		fmt.Println(login, password, hash)
 
->>>>>>> local
 	
 	if err != nil {
 		fmt.Println(err, "error")
@@ -77,16 +72,26 @@ func GetUserByLogin(login, password string) bool {
 		
 		return false
 	}
-<<<<<<< auth
-	
-	return true
-=======
 	fmt.Println(password, hash)
 	return CheckPassword(password, hash)
 	
->>>>>>> local
 }
 
 func Get() *sql.DB {
 	return atomicDB.Load().(*sql.DB)
+}
+
+const (
+	defaultCost = 12
+)
+
+func CheckPassword(password, hashedPassword string) bool {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
+}
+
+func HashPassword(password string) string {
+	if hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), defaultCost); err == nil {
+		return string(hashedPassword)
+	}
+	return ""
 }
