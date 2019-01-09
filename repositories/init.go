@@ -53,17 +53,38 @@ func InitDB() {
 
 func GetUserByLogin(login, password string) bool {
 
+<<<<<<< auth
 	err := Get().QueryRow("SELECT login, password FROM `users` WHERE login=? and password=?", login, password).Scan(		
 		&login,
 		&password)
+=======
+
+
+	hash := ""
+
+	err := Get().QueryRow("SELECT login, password FROM `users` WHERE login=?", login).Scan(		
+		&login,
+		&hash)
+		
+		fmt.Println(password, hash)
+		fmt.Println(login, password, hash)
+
+>>>>>>> local
 	
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err, "error")
+		fmt.Println(password, hash)
 		
 		return false
 	}
+<<<<<<< auth
 	
 	return true
+=======
+	fmt.Println(password, hash)
+	return CheckPassword(password, hash)
+	
+>>>>>>> local
 }
 
 func Get() *sql.DB {

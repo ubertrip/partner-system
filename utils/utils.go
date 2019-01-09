@@ -3,7 +3,6 @@ package utils
 import (
 	"crypto/rand"
 	"fmt"
-
 	"github.com/russross/blackfriday"
 )
 

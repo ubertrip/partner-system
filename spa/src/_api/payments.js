@@ -30,4 +30,9 @@ export default class {
   static getLoginForm (login, password){
     return Server.get(`driver/${login}/${password}`);
   }
+
+  static getUserByLogin (login){
+    return Server.get(`driver/${login}`);
+  }
+
 }
