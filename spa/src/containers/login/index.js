@@ -1,15 +1,14 @@
 import React  from 'react';
 // import PServer from './driver';
-import axios from 'axios';
 import { Redirect } from 'react-router';
 import { isAuth } from '../../_reducer'
 import { connect } from 'react-redux';
-import {getUser} from '../Payment/reducer'
+import {auth} from '../Payment/reducer'
 
 const LoginForm = props => <div className="wrapper serach-driver">
   
   <form onSubmit={props.sendForm}>
-  <fieldset>  
+  <fieldset className="wrapper-login">  
     <div className="wrapper-login">
       <label>Логин:</label>
       <input  type="text" size="70px" value={props.login} onChange={props.setProp.bind(this, 'login')} />
@@ -19,6 +18,10 @@ const LoginForm = props => <div className="wrapper serach-driver">
       <label>Пароль:</label>
       <input type="password" size="70px" value={props.password} onChange={props.setProp.bind(this, 'password')}/>
     </div>     
+
+    <div>
+      <input type="checkbox" name="remember"/>Запомнить меня
+    </div>
     </fieldset>
     <div>
       <input type="submit" size="70px" value="Войти" />
@@ -39,37 +42,16 @@ class Login extends React.Component {
   setlogin = e => this.setState({login: e.target.value});
 
 	onSendForm = e => {
-		e.preventDefault();
-    
-    
+	  e.preventDefault();
+
     if(!this.state.login || !this.state.password) {
       alert('Заполните все поля формы');      
     	return;
     }
 
     // в этом месте отправляем на сервер    
-    axios.post("http://localhost:4321/login",{
-      login: this.state.login,
-      password: this.state.password,
-    })
-    
-    // return PaymentsApi.getLoginForm(login, password)
-    .then(({data}) => {
-      if (data.status === 'ok') {
-        console.log('if is works', data);
-        this.props.isAuth(true);
-        this.setState({
-          router: <Redirect to="/payments" push />
-        })       
-      }
-    })
-    .catch((error) => {
-      this.props.isAuth(false)
-      console.log(error);
-      return alert("Cannot found user");
-      // }) 
-    });
-    this.props.getUser(this.state.login);
+    this.props.auth(this.state);
+    //this.props.getUser(this.state.login);
 
     return false;
   };
@@ -101,7 +83,7 @@ export default connect(
   null,
   {
     isAuth,
-    getUser
+    auth
   }
   )(Login)
 

@@ -35,4 +35,11 @@ export default class {
     return Server.get(`driver/${login}`);
   }
 
+  static auth(login, password) {
+    return Server.post(`login`, {
+      login, password
+    });
+  }
+
+
 }

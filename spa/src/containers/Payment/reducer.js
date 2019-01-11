@@ -2,6 +2,7 @@ import {PaymentsApi} from "../../_api";
 import {toggleLoading} from '../../_reducer';
 import {loadStatements} from '../../containers/Payments/actions';
 import {history} from '../../store';
+import { isAuth } from '../../_reducer'
 
 export const PAYMENT_LOAD_DRIVER_PAYMENTS = 'payment/load-driver-payments';
 
@@ -82,22 +83,21 @@ export const getDriver = (id) => (dispatch) => {
   });
 };
 
-export const getUser = (login) => (dispatch) => {
+export const auth = ({login, password}) => (dispatch) => {
   dispatch(toggleLoading(true, 'Авторизация...'));
+  return PaymentsApi.auth(login, password).then(({data}) => {
+    if (data.status === 'ok') {
+      console.log('if is works', data);
+      dispatch(isAuth(true));
+      history.push('/payments')      
+    }
+  })
+  .catch((error) => {
+    dispatch(isAuth(false));
+    console.log(error);
+    alert("Cannot found user");
+    dispatch(toggleLoading(false));
+    // }) 
+  });
   
-  return PaymentsApi.getUserByLogin(login).then(({data}) => {
-    if (data.status === 'ok') {     
-      dispatch({
-        type: PAYMENT_LOAD_DRIVER_PAYMENTS,
-        driver: {...data.result.driver},
-        payments: [...(data.result.payments ? data.result.payments : [])],
-        report: {...data.result.report},
-        weeklyPayment: {...data.result.weeklyPayment},
-        statement: {...data.result.statement},
-      });
-
-          history.push(`/paymants`);
-      }
-      dispatch(toggleLoading(false));
-      }).catch(err => dispatch(toggleLoading(false)));
 };

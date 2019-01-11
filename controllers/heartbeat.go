@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"github.com/labstack/echo"
-	// "fmt"
+	"fmt"
 	// "net/http"
 	"encoding/json"
 	// "github.com\ubertrip\partner-system\controllers"
 	"github.com/ubertrip/partner-system/repositories"
+	"golang.org/x/crypto/bcrypt"
 	
 )
 
@@ -48,10 +49,10 @@ func Login(c echo.Context) error {
 	}
 	
 	return JsonResponseOk(c, resp)
-<<<<<<< auth
+
 }
-=======
-}
+
+
 
 const (
 	defaultCost = 12
@@ -74,4 +75,3 @@ func HashPassword(password string) string {
 func CheckPassword(password, hashedPassword string) bool {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password)) == nil
 }
->>>>>>> local
