@@ -8,7 +8,7 @@ export default class WeeklyDashboard extends Component {
     totalPercentEarn: 0,
     incentives: 0,
     additional: 0,
-    driversCount: 6,
+    driversCount: 4,
     fixedWeeklyEarn: 0,
     fuel: 0,
     gas: 0,
