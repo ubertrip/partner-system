@@ -20,6 +20,7 @@ class Index extends Component {
   };
 
   render() {
+    console.log('in paymets,this.props.isAuth',this.props.isAuth);
     return <div>
       <div style={{padding: '10px 5px'}}>
         <StatementSelect
@@ -46,6 +47,8 @@ const mapStateToProps = state => ({
   payments: state.payments.list,
   statements: state.payments.statements,
   statementUUID: state.payments.statementUUID,
+  isAuth: state.global.isAuth,
+
 });
 
 export default connect(

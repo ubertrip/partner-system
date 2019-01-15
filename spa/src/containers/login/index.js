@@ -1,6 +1,5 @@
 import React  from 'react';
 // import PServer from './driver';
-import { Redirect } from 'react-router';
 import { isAuth } from '../../_reducer'
 import { connect } from 'react-redux';
 import {auth} from '../Payment/reducer'
@@ -26,9 +25,10 @@ const LoginForm = props => <div className="wrapper serach-driver">
     <div>
       <input type="submit" size="70px" value="Войти" />
     </div>
-    
   </form>
-   
+
+  <button onClick={props.logout}> Выход</button>
+
 </div>
 
 
@@ -42,7 +42,8 @@ class Login extends React.Component {
   setlogin = e => this.setState({login: e.target.value});
 
 	onSendForm = e => {
-	  e.preventDefault();
+    e.preventDefault();
+    console.log("onSendForm")
 
     if(!this.state.login || !this.state.password) {
       alert('Заполните все поля формы');      
@@ -63,6 +64,13 @@ class Login extends React.Component {
   	const value = e.target.value;
     this.setState({[prop]: value});
   };
+
+  logout = e => {
+    localStorage.removeItem('authorization');
+    console.log('logout');
+    localStorage.clear();
+    return false;
+  };
   
   render() {
     return <div className="wrapper serach-driver">
@@ -72,11 +80,14 @@ class Login extends React.Component {
         password={this.state.password} 
         sendForm={this.onSendForm}
         setProp={this.onSetProp}
+        logout={this.logout}
       />
       {this.state.router}
     </div>;
   }
 };
+
+
 
 
 export default connect(

@@ -50,6 +50,7 @@ export const onChangeStatementUUID = (statementUUID, driverUUID, toEdit) => (dis
   });
 
   if(driverUUID) {
+    console.log('redirect');
     history.push(`/credit/${statementUUID}/${driverUUID}${toEdit ? '/add' : ''}`);
   }
 };

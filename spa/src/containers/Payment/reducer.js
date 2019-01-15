@@ -89,15 +89,20 @@ export const auth = ({login, password}) => (dispatch) => {
     if (data.status === 'ok') {
       console.log('if is works', data);
       dispatch(isAuth(true));
-      history.push('/payments')      
+      history.push(`/payments`);
+      localStorage.setItem('authorization', 'true')
+      dispatch(toggleLoading(false));
+
     }
   })
   .catch((error) => {
     dispatch(isAuth(false));
     console.log(error);
-    alert("Cannot found user");
+    alert("Cannot found user1");
     dispatch(toggleLoading(false));
     // }) 
   });
+
+  
   
 };

@@ -4,15 +4,15 @@ import { connect } from 'react-redux';
 
 export default function requireAuthentication(Component) {
 
-  class AuthenticatedComponent extends Component {
+  class AuthenticatedComponent extends React.Component {
     render() {
-      console.log ("props", this.props.isAuth)
+      console.log ("props", Component)
       return (
         <div>
-          {this.props.isAuth
+          {/* {this.props.isAuth
             ? <Component {...this.props} />
             : <h1>error1</h1>
-          }
+          } */}
         </div>
       )
     }

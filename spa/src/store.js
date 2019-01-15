@@ -8,7 +8,14 @@ export const history = createHistory({
   //basename: '/app',
 });
 
-const initialState = {};
+const initialState = {
+  driverPayments: {
+    isAuth: localStorage.getItem('authorization') || false,
+  },
+  global: {
+    isAuth: localStorage.getItem('authorization') || false,
+    }
+};
 
 const enhancers = [];
 const middleware = [
