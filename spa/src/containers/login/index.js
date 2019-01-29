@@ -3,6 +3,10 @@ import React  from 'react';
 import { isAuth } from '../../_reducer'
 import { connect } from 'react-redux';
 import {auth} from '../Payment/reducer'
+import { islogout } from '../../_reducer'
+import axios from 'axios';
+import {Redirect} from 'react-router';
+
 
 const LoginForm = props => <div className="wrapper serach-driver">
   
@@ -26,14 +30,16 @@ const LoginForm = props => <div className="wrapper serach-driver">
       <input type="submit" size="70px" value="Войти" />
     </div>
   </form>
+  <form onSubmit={props.onlogout}>
+  <div>
+  <input type="submit" size="70" value="Выйти" />
+  </div>
+  </form>
+  
+  </div>
 
-  <button onClick={props.logout}> Выход</button>
 
-</div>
-
-
-
-class Login extends React.Component {
+ class Login extends React.Component {
   constructor(props){
     super(props)
     this.state = {login: '123', password: '123', isLoading: false, loadingMessage: '', router: null};
@@ -65,13 +71,6 @@ class Login extends React.Component {
     this.setState({[prop]: value});
   };
 
-  logout = e => {
-    localStorage.removeItem('authorization');
-    console.log('logout');
-    localStorage.clear();
-    return false;
-  };
-  
   render() {
     return <div className="wrapper serach-driver">
       <h1 className="wrapper">Войти в UberTrip</h1>
@@ -80,21 +79,105 @@ class Login extends React.Component {
         password={this.state.password} 
         sendForm={this.onSendForm}
         setProp={this.onSetProp}
-        logout={this.logout}
+        logout={this.onlogout}
+        // logout={this.logout}
       />
       {this.state.router}
     </div>;
   }
+
+};
+  class Logout extends React.Component {
+    constructor(props){
+      super(props)
+      this.onClick=this.onlogout.bind(this);
+    }
+  
+    // logoutAccaunt = e => {
+    //   this.setState({login: e.target.value});
+    // }
+  
+    onlogout = e => {
+      e.preventDefault();
+      this.props.logout();
+      console.log("logout")
+  
+      const user = {
+        login : this.state.login,
+      }
+      
+  
+    axios.get(`http://localhost:4321/login`,{user})
+    .then(res => {
+        console.log(res);
+        console.log(res.data);
+        // axios.defaults.headers.common['Authorization'] = null
+        // doNextThing()
+    })
+// };
+    // .then(({data}) => {
+    //   if (data.status === 'ok') {
+    //     console.log('if is works', data);
+    //     // dispatch(islogout(true));
+    //     this.setState({
+    //       router: <Redirect to= "/logout" push />
+    //     });
+    // this.props.out(this.state);
+    //   }
+    // })
+    
+    .catch((error) => {
+      alert('you are trespassing')
+    });
+  
+    };
+    logout = e => {
+      localStorage.removeItem('authorization');
+      console.log('logout');
+      return false;
+    };
+  
+  render() {
+    const { user } = this.props;
+        if (user === null) return <Redirect to='/login'/>;
+    return <div> 
+    <button onClick={this.onlogout}> Выход</button>
+    </div>;
+    
+    // <form onClick={this.onlogout}
+    // <input type="submit" />
+    // </form>
+    // <div style={style}>
+    // </div>
+    
+    // 
+    // <div className="wrapper serach-driver">
+    /* <h1 className="wrapper">Выйти в UberTrip</h1>
+    <LoginForm 
+      logout={this.onlogout}
+
+    /> */
+   
+}
+  
+  };
+
+const mapStateToProps = state =>({
+  logout: state.global.logout,
+  state
+});
+
+const mapDispatchToProps = {
+  islogout,
 };
 
-
-
-
 export default connect(
-  null,
+  null, 
   {
     isAuth,
-    auth
+    auth,
+    // islogout,
   }
   )(Login)
 
+connect(mapStateToProps, mapDispatchToProps)(Logout);

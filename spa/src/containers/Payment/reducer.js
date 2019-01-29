@@ -98,11 +98,27 @@ export const auth = ({login, password}) => (dispatch) => {
   .catch((error) => {
     dispatch(isAuth(false));
     console.log(error);
-    alert("Cannot found user1");
+    alert("Cannot found user");
     dispatch(toggleLoading(false));
-    // }) 
   });
-
-  
-  
+ 
 };
+
+// export const logout = ({login, password}) => (dispatch) => {
+//   dispatch(toggleLoading(true, 'Выход...'));
+//   return PaymentsApi.auth(login, password).then(({data}) => {
+//     if (data.status === 'ok') {
+//       console.log('if is works', data);
+//       dispatch(isAuth(true));
+//       history.push(`/login`);
+//       dispatch(toggleLoading(false));
+
+//     }
+//   })
+//   .catch((error) => {
+//     dispatch(isAuth(false));
+//     console.log(error);
+//     alert("Cannot out");
+//     dispatch(toggleLoading(false));
+//   });
+// };

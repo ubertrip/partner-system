@@ -9,6 +9,7 @@ import BaseLayout from './containers/BaseLayout';
 import CLoading from  './containers/Loading';
 import CPayment from  './containers/Payment';
 import Login from  './containers/login';
+import Logout from  './containers/login';
 import test from './containers/test';
 import CSearchByDriverID from './containers/Payment/SearchByDriverID';
 import requireAuthentication from './containers/AuthenticatedComponent';
@@ -34,6 +35,7 @@ class App extends Component {
           <Route exact path="/" render={() => <Index {...this.props}/>}/>
           <Route exact path="/payments" component={(Payments)}/>
           <Route exact path="/login" component={Login}/>
+          <Route exact path="/login" component={Logout}/>
           <Route exact path="/test" component ={test}/>
           <Route exact path="/driver" component={CSearchByDriverID}/>
           <Route exact path="/credit/:statementUUID/:driverUUID/:mode" component={requireAuthentication(CPayment)}/>
