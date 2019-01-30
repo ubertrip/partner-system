@@ -1,6 +1,6 @@
 export const TOGGLE_LOADER = 'toggle-loader';
 export const IS_AUTH = 'authorization';
-export const IS_LOGOUT = 'logout';
+// export const IS_LOGOUT = 'logout';
 
 
 const initialState = {
@@ -8,7 +8,7 @@ const initialState = {
   isLoading: false,
   loadingMessage: '',
   isAuth: false,
-  islogout: true,
+  // islogout: true,
 };
 
 export default (state = initialState, action) => {
@@ -29,14 +29,14 @@ export default (state = initialState, action) => {
           loadingMessage: action.text
         }
 
-        case IS_LOGOUT:
-        console.log('IS_LOGOUT', action);
+        // case IS_LOGOUT:
+        // console.log('IS_LOGOUT', action);
         
-        return{
-          ...state,
-          islogout: action.value,
-          loadingMessage: action.text
-        }
+        // return{
+        //   ...state,
+        //   islogout: action.value,
+        //   loadingMessage: action.text
+        // }
 
     default:
       return state
@@ -55,7 +55,7 @@ export const isAuth = (value = false) => ({
   value,
 })
 
-export const islogout = (value = true) => ({
-  type: IS_LOGOUT,
-  value,
-})
+// export const islogout = (value = true) => ({
+//   type: IS_LOGOUT,
+//   value,
+// })

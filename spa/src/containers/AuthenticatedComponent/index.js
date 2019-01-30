@@ -9,10 +9,10 @@ export default function requireAuthentication(Component) {
       console.log ("props", Component)
       return (
         <div>
-          {/* {this.props.isAuth
+          {this.props.isAuth
             ? <Component {...this.props} />
             : <h1>error1</h1>
-          } */}
+          }
         </div>
       )
     }

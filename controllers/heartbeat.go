@@ -16,7 +16,7 @@ import (
 	"github.com/ubertrip/partner-system/repositories"
 	"golang.org/x/crypto/bcrypt"
 )
-
+// middleware
 func JwtAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		// cookies, err := c.Cookie("sess")
@@ -116,12 +116,13 @@ func CheckPassword(password, hashedPassword string) bool {
 }
 
 func Logout(c echo.Context) error {
+	var loginForm LoginForm
 	var cookie Cookie
 
 	var resp LoginStatus
 
 	resp.Status = repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
-	
+
 	err := json.NewDecoder(c.Request().Body).Decode(&cookie)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, struct {

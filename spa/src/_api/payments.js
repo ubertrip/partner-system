@@ -27,9 +27,9 @@ export default class {
     return Server.get(`drivers/${id}`);
   }
 
-  static getLoginForm (login, password){
-    return Server.get(`driver/${login}/${password}`);
-  }
+  // static getLoginForm (login, password){
+  //   return Server.get(`driver/${login}/${password}`);
+  // }
 
   static getUserByLogin (login){
     return Server.get(`driver/${login}`);
@@ -39,6 +39,10 @@ export default class {
     return Server.post(`login`, {
       login, password
     });
+  }
+
+  static logout(){
+    return Server.get(`logout`);
   }
 
 

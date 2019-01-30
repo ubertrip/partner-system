@@ -28,10 +28,24 @@ const Index = props => {
 
 
 class App extends Component {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     isAuth: false
+  //   };
+  // }
+  // userHasAuthenticated = authenticated => {
+  //   this.setState({ isAuth: authenticated });
+  // }
   render() {
+    // const childProps = {
+    //   isAuth: this.state.isAuth,
+    //   userHasAuth: this.userHasAuthenticated
+    // };
     return <Router history={history}>
       <BaseLayout>
         <Switch>
+        {/* <Route childProps={childProps} /> */}
           <Route exact path="/" render={() => <Index {...this.props}/>}/>
           <Route exact path="/payments" component={(Payments)}/>
           <Route exact path="/login" component={Login}/>
