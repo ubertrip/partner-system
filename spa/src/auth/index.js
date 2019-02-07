@@ -1,22 +1,5 @@
-
-import './auth.scss';
 import React  from 'react';
-import {Link} from 'react-router-dom';  
-// import axios from 'axios';
-
-// const MenuForm = props => <div className="">
-//     <div className="menu">
-//         <div className="infinity-menu-node-container">
-//         <label>auth</label>
-        
-//         <input  type="submit" size=""   value={props.menus} />
-
-//         </div>
-
-
-//     </div>
-// </div>
-
+import {Link} from 'react-router-dom';
 
 export default class Menu extends React.Component {
     constructor(props){
@@ -30,7 +13,6 @@ export default class Menu extends React.Component {
         ]}
     }
         
-
         render () {
         return <div className="menu">
             {this.state.menus.map((value, index)=>{
@@ -40,7 +22,6 @@ export default class Menu extends React.Component {
                 menus={this.state.auth}
                 /> */}
                 </div> 
-                
                 })}
         </div>
 

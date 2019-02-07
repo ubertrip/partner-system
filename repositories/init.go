@@ -2,13 +2,13 @@ package repositories
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"sync/atomic"
-	"os"
 	"fmt"
+	"os"
+	"sync/atomic"
+
+	_ "github.com/go-sql-driver/mysql"
 	configuration "github.com/ubertrip/partner-system/config"
 	"golang.org/x/crypto/bcrypt"
-	
 )
 
 var (
@@ -47,34 +47,33 @@ func InitDB() {
 
 	atomicDB.Store(db)
 
-	
-
 	fmt.Println("Database OK")
 }
 
 func GetUserByLogin(login, password string) bool {
 
-
-
 	hash := ""
 
-	err := Get().QueryRow("SELECT login, password FROM `users` WHERE login=?", login).Scan(		
+	err := Get().QueryRow("SELECT login, password FROM `users` WHERE login=?", login).Scan(
 		&login,
 		&hash)
-		
-		fmt.Println(password, hash)
-		fmt.Println(login, password, hash)
 
-	
+	fmt.Println(password, hash)
+	fmt.Println(login, password, hash)
+
 	if err != nil {
 		fmt.Println(err, "error")
 		fmt.Println(password, hash)
-		
+
 		return false
 	}
 	fmt.Println(password, hash)
 	return CheckPassword(password, hash)
-	
+
+}
+
+func GetStatus() bool {
+	return false
 }
 
 func Get() *sql.DB {

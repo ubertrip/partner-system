@@ -1,10 +1,7 @@
 import React  from 'react';
-// import PServer from './driver';
-import { isAuth } from '../../_reducer'
 import { connect } from 'react-redux';
 import {auth} from '../Payment/reducer'
 import {logout} from '../Payment/reducer'
-// import { islogout } from '../../_reducer'
 
 
 const LoginForm = props => <div className="wrapper serach-driver">
@@ -19,25 +16,13 @@ const LoginForm = props => <div className="wrapper serach-driver">
     <div className="wrapper-login">
       <label>Пароль:</label>
       <input type="password" size="70px" value={props.password} onChange={props.setProp.bind(this, 'password')}/>
-    </div>     
-
-    <div>
-      <input type="checkbox" name="remember"/>Запомнить меня
     </div>
     </fieldset>
     <div>
-      <input type="submit" size="70px" value="Войти" />
+      <input type="submit" value="Войти" />
     </div>
   </form>
-  {/* <form onSubmit={props.logout}>
-  <div>
-  <input type="submit" size="70" value="Выйти" />
   </div>
-  </form> */}
-  {/* <button type="button" onClick={props.logout}>Выйти</button> */}
-  
-  </div>
-
 
  class Login extends React.Component {
   constructor(props){
@@ -76,83 +61,38 @@ const LoginForm = props => <div className="wrapper serach-driver">
         password={this.state.password} 
         sendForm={this.onSendForm}
         setProp={this.onSetProp}
-        logout={this.props.onlogout}
+        logout={this.props.onLogout}
       />
-      <button type="button"  onClick={this.logout}>Выход</button>
+      <Logout logout={logout} ref="logout" />
       {this.state.router}
-      {/* {this.state.onlogout} */}
     </div>;
   }
 
 };
 class Logout extends React.Component {
 
-
-  onlogout = e => {
-    e.preventDefault();
+  onLogout() {
     console.log("logout")
-
-     this.onClick=this.onlogout.bind(this);
-
     this.props.logout(this.state);
-    
-    return false;
   };
 
   render() {
-    return 
+    return <div className="button"> 
+      <button onClick={e => this.onLogout(e)}>Выход</button>
+    </div>
     }
-};
-  // constructor(props){
-  //   super(props)
-  //   this.state = {status: "ok",}
-    // this.onClick=this.onlogout.bind(this);
-  // }
-
-  // logoutAccaunt = e => {
-  //   this.setState({login: e.target.value});
-  // }
-
-  
-    // e.preventDefault();
-    // this.props.logout();
-    
-  //   return PaymentsApi.logout(login, password).then(({data}) => {
-  //   if(!data.status === 'ok') {
-  //     console.log("logout", data)
-  //     // return;
-  //   }
-  // })
-  //   // const user = {
-    //   login : this.state.login,
-    // }
-    
-  //   return false;
-  // };
-  
-  // logout = e => {
-  //   localStorage.removeItem('authorization');
-  //   console.log('logout');
-  //   return false;
-  // };
-
-
-const mapStateToProps = state =>({
-  logout: state.global.logout,
-  state
-});
-
-const mapDispatchToProps = {
-  logout,
 };
 
 export default connect(
   null, 
   {
-    isAuth,
     auth,
-    // islogout,
   }
   )(Login)
 
-connect(mapStateToProps, mapDispatchToProps)(Logout);
+connect(
+  null,
+  {
+    logout
+  }
+  )(Logout);

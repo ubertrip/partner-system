@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"github.com/labstack/echo"
-	"net/http"
 	"encoding/json"
+	"net/http"
+
+	"github.com/labstack/echo"
+	uuid "github.com/satori/go.uuid"
 	"github.com/ubertrip/partner-system/models"
 	"github.com/ubertrip/partner-system/repositories"
-	"github.com/satori/go.uuid"
 	"github.com/ubertrip/partner-system/utils"
 )
 
@@ -92,8 +93,6 @@ func GetDriverStatement(c echo.Context) error {
 	//	return JsonResponseErr(c, "Cannot select driver payments")
 	//}
 
-	
-
 	weeklyPayment, err := repositories.GetDriverWeeklyPayment(statementUuid, driverUuid)
 
 	//if err != nil {
@@ -136,7 +135,6 @@ func GetByStatement(c echo.Context) error {
 	//if err != nil {
 	//	return JsonResponseErr(c, "Cannot select weekly payments")
 	//}
-
 
 	for _, weeklyPayment := range weeklyPayments {
 		sortedWeeklyPayments[weeklyPayment.DriverUuid] = weeklyPayment

@@ -1,10 +1,11 @@
 package config
 
 import (
-	"github.com/spf13/viper"
+	"flag"
 	"fmt"
 	"sync/atomic"
-	"flag"
+
+	"github.com/spf13/viper"
 )
 
 type Database struct {
@@ -18,6 +19,7 @@ type Database struct {
 type Config struct {
 	Port     string   `json:"port"`
 	Database Database `json:"database"`
+	Cookie   int      `json:"cookie"`
 }
 
 var atomicConfig atomic.Value

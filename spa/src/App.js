@@ -10,9 +10,7 @@ import CLoading from  './containers/Loading';
 import CPayment from  './containers/Payment';
 import Login from  './containers/login';
 import Logout from  './containers/login';
-import test from './containers/test';
 import CSearchByDriverID from './containers/Payment/SearchByDriverID';
-import requireAuthentication from './containers/AuthenticatedComponent';
 import Menu from './auth';
 import Link from './auth';
 
@@ -28,33 +26,17 @@ const Index = props => {
 
 
 class App extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     isAuth: false
-  //   };
-  // }
-  // userHasAuthenticated = authenticated => {
-  //   this.setState({ isAuth: authenticated });
-  // }
   render() {
-    // const childProps = {
-    //   isAuth: this.state.isAuth,
-    //   userHasAuth: this.userHasAuthenticated
-    // };
     return <Router history={history}>
       <BaseLayout>
         <Switch>
-        {/* <Route childProps={childProps} /> */}
           <Route exact path="/" render={() => <Index {...this.props}/>}/>
           <Route exact path="/payments" component={(Payments)}/>
           <Route exact path="/login" component={Login}/>
           <Route exact path="/login" component={Logout}/>
-          <Route exact path="/test" component ={test}/>
           <Route exact path="/driver" component={CSearchByDriverID}/>
-          <Route exact path="/credit/:statementUUID/:driverUUID/:mode" component={requireAuthentication(CPayment)}/>
-          <Route exact path="/credit/:statementUUID/:driverUUID" component={requireAuthentication(CPayment)}/>
-          {/* <Route exact path="/admin" component={requireAuthentication(Payments)}/> */}
+          <Route exact path="/credit/:statementUUID/:driverUUID/:mode" component={CPayment}/>
+          <Route exact path="/credit/:statementUUID/:driverUUID" component={CPayment}/>
           <Route exact path="/auth" component={Menu} />
           <Route exact path="/auth" component={Link} />
         </Switch>

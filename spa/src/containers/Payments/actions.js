@@ -29,10 +29,11 @@ export const loadStatements = () => (dispatch) => {
         type: PAYMENTS_LOAD_STATEMENTS,
         statements: data.result,
       });
+    }else{
+      console.log('redir2');
+      history.push(`/login`)
     }
-
     dispatch(toggleLoading(false));
-
     return data.result;
   })
 };
@@ -50,7 +51,7 @@ export const onChangeStatementUUID = (statementUUID, driverUUID, toEdit) => (dis
   });
 
   if(driverUUID) {
-    console.log('redirect');
+    console.log('redirect3');
     history.push(`/credit/${statementUUID}/${driverUUID}${toEdit ? '/add' : ''}`);
   }
 };

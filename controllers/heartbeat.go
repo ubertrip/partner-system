@@ -2,30 +2,28 @@ package controllers
 
 import (
 	"fmt"
-	// "strings"
-
-	// "log"
 	"net/http"
-
 	"time"
 
-	"github.com/labstack/echo"
-
 	"encoding/json"
-	// "github.com\ubertrip\partner-system\controllers"
+
+	"github.com/labstack/echo"
+	configuration "github.com/ubertrip/partner-system/config"
 	"github.com/ubertrip/partner-system/repositories"
+	"github.com/ubertrip/partner-system/utils"
 	"golang.org/x/crypto/bcrypt"
 )
+
 // middleware
 func JwtAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		// cookies, err := c.Cookie("sess")
-		// fmt.Println(cookies.Name, "okey")
-		// fmt.Println(cookies.Value, "okey")
-		// if err != nil {
-		// 	return JsonResponseErr(c, err)
-		// }
+		cookies, err := c.Cookie("sess")
+		if err != nil {
+			return JsonResponseErr(c, err)
+		}
 
+		fmt.Println(cookies.Name, "okey")
+		fmt.Println(cookies.Value, "okey")
 		return next(c)
 	}
 }
@@ -51,16 +49,12 @@ type LoginStatus struct {
 }
 
 type Cookie struct {
-	Cookie string `json: "cookie"`
+	Cookie string `json:"cookie"`
 }
 
 func Login(c echo.Context) error {
 	var loginForm LoginForm
-
-	//Cookies(r *http.Request, w http.ResponseWriter)
-
 	json.NewDecoder(c.Request().Body).Decode(&loginForm)
-	// readCookie(c echo.Context)
 
 	var resp LoginStatus
 
@@ -71,24 +65,18 @@ func Login(c echo.Context) error {
 	if !ok {
 		return JsonResponseErr(c, ok)
 	}
+	config := configuration.Get()
 
 	cookie := http.Cookie{
 		Name:     "sess",
 		Value:    "123AQW",
 		Path:     "/",
 		HttpOnly: true,
-		Expires:  time.Now().Add(48 * time.Hour),
+		Expires:  utils.Midnight().Add(time.Duration(config.Cookie) * time.Hour),
 	}
-	// cookies, err := c.Cookie("sess")
-	// if err != nil {
-	// 	return err
-	// }
 
 	c.SetCookie(&cookie)
-
-	// fmt.Println(cookies.Name)
-	// fmt.Println(cookies.Value)
-
+	fmt.Println(cookie.Expires)
 	return JsonResponseOk(c, resp)
 }
 
@@ -116,21 +104,16 @@ func CheckPassword(password, hashedPassword string) bool {
 }
 
 func Logout(c echo.Context) error {
-	var loginForm LoginForm
 	var cookie Cookie
 
-	var resp LoginStatus
+	json.NewDecoder(c.Request().Body).Decode(&cookie)
 
-	resp.Status = repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
-
-	err := json.NewDecoder(c.Request().Body).Decode(&cookie)
+	cookiess, err := c.Cookie("sess")
+	fmt.Println(cookiess.Name, "okey1")
+	fmt.Println(cookiess.Value, "okey1")
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, struct {
-			Status string
-			Error  string
-		}{"error", err.Error()})
+		return JsonResponseErr(c, err)
 	}
-	// var resp LoginStatus
 
 	cookies := http.Cookie{
 		Name:   "sess",
@@ -138,6 +121,6 @@ func Logout(c echo.Context) error {
 	}
 	c.SetCookie(&cookies)
 	fmt.Println("nice")
-	return JsonResponseErr(c, cookies)
+	return JsonResponseOk(c, nil)
 
 }

@@ -2,7 +2,6 @@ import {PaymentsApi} from "../../_api";
 import {toggleLoading} from '../../_reducer';
 import {loadStatements} from '../../containers/Payments/actions';
 import {history} from '../../store';
-import { isAuth } from '../../_reducer'
 
 export const PAYMENT_LOAD_DRIVER_PAYMENTS = 'payment/load-driver-payments';
 
@@ -87,40 +86,26 @@ export const auth = ({login, password}) => (dispatch) => {
   dispatch(toggleLoading(true, 'Авторизация...'));
   return PaymentsApi.auth(login, password).then(({data}) => {
     if (data.status === 'ok') {
-      // this.props.userHasAuthenticated(true);
-      // alert("Loggin");
       console.log('if is works', data);
-      dispatch(isAuth(true));
       history.push(`/payments`);
-      // localStorage.setItem('authorization', 'true')
       dispatch(toggleLoading(false));
-
     }
   })
   .catch((error) => {
-    dispatch(isAuth(false));
     console.log(error);
     alert("Cannot found user");
     dispatch(toggleLoading(false));
   });
- 
 };
 
-export const logout = () => (dispatch) => {
-  dispatch(toggleLoading(true, 'Выход...'));
-  return PaymentsApi.logout().then(({data}) => {
-    if (data.status === 'ok') {
-      console.log('if is logout', data);
-      dispatch(isAuth(false));
-      history.push(`/login`);
-      dispatch(toggleLoading(false));
-
-    }
+export const logout = () => {
+  console.log("work");
+  return PaymentsApi.logout().then(() => {
+    console.log('if is works');
+      history.push(`/auth`);
   })
   .catch((error) => {
-    // dispatch(isAuth(false));
     console.log(error);
     alert("Cannot out");
-    dispatch(toggleLoading(false));
   });
 };

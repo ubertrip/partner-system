@@ -6,7 +6,7 @@ const {baseURL} = config;
 const Server = axios.create({
   baseURL,
   validateStatus: function (status) {
-    return status < 400;
+    return status < 500;
   },
 });
 

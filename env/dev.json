@@ -1,5 +1,6 @@
 {
   "port": "4321",
+  "cookie": 4,
   "database": {
     "port": "3306",
     "host": "localhost",
