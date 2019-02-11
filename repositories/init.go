@@ -50,25 +50,28 @@ func InitDB() {
 	fmt.Println("Database OK")
 }
 
-func GetUserByLogin(login, password string) bool {
+func GetUserByLogin(login, password string) (bool, int) {
 
 	hash := ""
+	ID := 0
 
-	err := Get().QueryRow("SELECT login, password FROM `users` WHERE login=?", login).Scan(
+	err := Get().QueryRow("SELECT login, password, ID FROM `users` WHERE login=?", login).Scan(
 		&login,
-		&hash)
+		&hash,
+		&ID)
 
 	fmt.Println(password, hash)
 	fmt.Println(login, password, hash)
+	fmt.Println(login, password, ID)
 
 	if err != nil {
 		fmt.Println(err, "error")
 		fmt.Println(password, hash)
 
-		return false
+		return false, 0
 	}
 	fmt.Println(password, hash)
-	return CheckPassword(password, hash)
+	return CheckPassword(password, hash), ID
 
 }
 
@@ -94,3 +97,9 @@ func HashPassword(password string) string {
 	}
 	return ""
 }
+
+// func init() {
+// 	ID := 1
+// 	pass := GetUserByLogin("123", "123", (ID))
+// 	fmt.Println(pass)
+// }

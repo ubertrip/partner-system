@@ -1,6 +1,7 @@
 import React  from 'react';
 import { connect } from 'react-redux';
 import {auth} from '../Payment/reducer'
+import {toggleLoading} from '../../_reducer';
 import {logout} from '../Payment/reducer'
 
 
@@ -43,7 +44,7 @@ const LoginForm = props => <div className="wrapper serach-driver">
     // в этом месте отправляем на сервер    
     this.props.auth(this.state);
     //this.props.getUser(this.state.login);
-
+    toggleLoading(false);
     return false;
   };
 

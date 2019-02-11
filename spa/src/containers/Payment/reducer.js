@@ -84,18 +84,18 @@ export const getDriver = (id) => (dispatch) => {
 
 export const auth = ({login, password}) => (dispatch) => {
   dispatch(toggleLoading(true, 'Авторизация...'));
+
   return PaymentsApi.auth(login, password).then(({data}) => {
     if (data.status === 'ok') {
       console.log('if is works', data);
       history.push(`/payments`);
       dispatch(toggleLoading(false));
+    }else{
+      console.log('if is works2');
+      alert("Cannot found user");
+      dispatch(toggleLoading(false));
     }
   })
-  .catch((error) => {
-    console.log(error);
-    alert("Cannot found user");
-    dispatch(toggleLoading(false));
-  });
 };
 
 export const logout = () => {

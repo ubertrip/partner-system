@@ -1,6 +1,6 @@
 {
   "port": "4321",
-  "cookie": 4,
+  "cookieExperetionTime": "4h6m",
   "database": {
     "port": "3306",
     "host": "localhost",

@@ -3,27 +3,31 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"encoding/json"
 
 	"github.com/labstack/echo"
 	configuration "github.com/ubertrip/partner-system/config"
+	"github.com/ubertrip/partner-system/jwt"
 	"github.com/ubertrip/partner-system/repositories"
 	"github.com/ubertrip/partner-system/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
+var (
+	inst = jwt.New("ePXXC2v2YCzZFW9yU9Pu2mBc3GgefkEVf5zWhAw9YcvFb8Na")
+)
+
 // middleware
 func JwtAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		cookies, err := c.Cookie("sess")
-		if err != nil {
-			return JsonResponseErr(c, err)
+
+		if cookie, err := c.Cookie("sess"); err == nil {
+			if _, success := inst.Decode(cookie.Value); !success {
+				return JsonResponseErr(c, err)
+			}
 		}
 
-		fmt.Println(cookies.Name, "okey")
-		fmt.Println(cookies.Value, "okey")
 		return next(c)
 	}
 }
@@ -38,6 +42,7 @@ func Info(c echo.Context) error {
 type LoginForm struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
+	ID       int    `json:"ID"`
 }
 
 type Menu struct {
@@ -58,25 +63,34 @@ func Login(c echo.Context) error {
 
 	var resp LoginStatus
 
-	resp.Status = repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
+	resp.Status, _ = repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
 
-	ok := repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
-
+	ok, id := repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
 	if !ok {
 		return JsonResponseErr(c, ok)
 	}
+
+	fmt.Println(loginForm.ID)
 	config := configuration.Get()
+
+	tm := utils.Midnight().Add(config.Cookie)
+
+	session := jwt.Session{
+		ID:      int64(id),
+		Expired: tm.Unix(),
+	}
 
 	cookie := http.Cookie{
 		Name:     "sess",
-		Value:    "123AQW",
+		Value:    inst.Encode(&session),
 		Path:     "/",
 		HttpOnly: true,
-		Expires:  utils.Midnight().Add(time.Duration(config.Cookie) * time.Hour),
+		Expires:  tm,
 	}
 
 	c.SetCookie(&cookie)
 	fmt.Println(cookie.Expires)
+	fmt.Println(session.ID)
 	return JsonResponseOk(c, resp)
 }
 
