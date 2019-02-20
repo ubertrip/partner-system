@@ -33,6 +33,8 @@ func main() {
 
 	e.GET("/logout", controllers.Logout)
 
+	e.POST("/create-user", controllers.NewUser)
+
 	e.POST("/payments", controllers.UpdateWeeklyPayments)
 	e.POST("/statements", controllers.UpdateWeeklyStatements)
 	e.PUT("/drivers/:id", controllers.UpdateDriver) // :driverUUID

@@ -91,7 +91,7 @@ export const auth = ({login, password}) => (dispatch) => {
       history.push(`/payments`);
       dispatch(toggleLoading(false));
     }else{
-      console.log('if is works2');
+      console.log('it is not true login or password');
       alert("Cannot found user");
       dispatch(toggleLoading(false));
     }

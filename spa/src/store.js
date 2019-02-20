@@ -10,10 +10,10 @@ export const history = createHistory({
 
 const initialState = {
   driverPayments: {
-    isAuth: localStorage.getItem('authorization') || false,
+    // isAuth: localStorage.getItem('authorization') || false,
   },
   global: {
-    isAuth: localStorage.getItem('authorization') || false,
+    // isAuth: localStorage.getItem('authorization') || false,
     }
 };
 

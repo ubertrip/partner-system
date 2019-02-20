@@ -18,9 +18,9 @@ type Database struct {
 }
 
 type Config struct {
-	Port     string        `json:"port"`
-	Database Database      `json:"database"`
-	Cookie   time.Duration `json:"cookieExperetionTime"`
+	Port                 string        `json:"port"`
+	Database             Database      `json:"database"`
+	CookieExpirationTime time.Duration `json:"cookieExpirationTime"`
 }
 
 var atomicConfig atomic.Value

@@ -2,7 +2,7 @@ import React  from 'react';
 import { connect } from 'react-redux';
 import {auth} from '../Payment/reducer'
 import {toggleLoading} from '../../_reducer';
-import {logout} from '../Payment/reducer'
+import {logout} from '../Payment/reducer';
 
 
 const LoginForm = props => <div className="wrapper serach-driver">
@@ -70,6 +70,7 @@ const LoginForm = props => <div className="wrapper serach-driver">
   }
 
 };
+
 class Logout extends React.Component {
 
   onLogout() {
@@ -89,7 +90,7 @@ export default connect(
   {
     auth,
   }
-  )(Login)
+  )(Login);
 
 connect(
   null,
@@ -97,3 +98,10 @@ connect(
     logout
   }
   )(Logout);
+  
+  connect(
+    null,
+    {
+      logout
+    }
+    )(Logout);
