@@ -4,60 +4,46 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"regexp"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	configuration "github.com/ubertrip/partner-system/config"
-	"github.com/ubertrip/partner-system/jwt"
+
 	"github.com/ubertrip/partner-system/repositories"
 	"github.com/ubertrip/partner-system/utils"
 	"golang.org/x/crypto/bcrypt"
-)
-
-var (
-	inst = jwt.New("ePXXC2v2YCzZFW9yU9Pu2mBc3GgefkEVf5zWhAw9YcvFb8Na")
+	validator "gopkg.in/go-playground/validator.v9"
 )
 
 // middleware
-func JwtAuth(next echo.HandlerFunc) echo.HandlerFunc {
+func Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 
 		if cookie, err := c.Cookie("sess"); err == nil {
-			if _, success := inst.Decode(cookie.Value); !success {
-				return JsonResponseErr(c, err)
-			}
+			fmt.Println(cookie.Value)
+			return next(c)
 		}
-
-		return next(c)
+		return JsonResponseErr(c, "")
 	}
 }
 
 type LoginForm struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
+	Login    string `json:"login" validate:"min=5,max=32,alphanum,required"`
+	Password string `json:"password" validate:"min=5,max=32,alphanum,required"`
 	ID       int    `json:"ID"`
 }
 
-type User struct {
-	Login    string
-	Password string
-}
-
-type Menu struct {
-	Menu string `json:"Menu" `
-}
-
-type LoginStatus struct {
-	Status bool `json:"status"`
+type JwtCustomClaims struct {
+	Login bool `json:"login"`
+	ID    int  `json:"id"`
+	jwt.StandardClaims
 }
 
 func Login(c echo.Context) error {
+
 	var loginForm LoginForm
+
 	json.NewDecoder(c.Request().Body).Decode(&loginForm)
-
-	var resp LoginStatus
-
-	resp.Status, _ = repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
 
 	login, id := repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
 	if !login {
@@ -67,15 +53,25 @@ func Login(c echo.Context) error {
 	config := configuration.Get()
 	tm := utils.Midnight().Add(config.CookieExpirationTime)
 
-	session := jwt.Session{
-		ID:      int64(id),
-		Login:   login,
-		Expired: tm.Unix(),
+	claims := &JwtCustomClaims{
+		login,
+		id,
+		jwt.StandardClaims{
+			ExpiresAt: tm.Unix(),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, err := token.SignedString([]byte("secret"))
+	if err != nil {
+		fmt.Println("+")
+		return err
 	}
 
 	cookie := http.Cookie{
 		Name:     "sess",
-		Value:    inst.Encode(&session),
+		Value:    t,
 		Path:     "/",
 		HttpOnly: true,
 		Expires:  tm,
@@ -83,9 +79,24 @@ func Login(c echo.Context) error {
 
 	c.SetCookie(&cookie)
 	fmt.Println(cookie.Expires)
-	fmt.Println(session.ID)
-	// fmt.Println(session.Login)
-	return JsonResponseOk(c, resp)
+	fmt.Println(claims.ID)
+	fmt.Println(claims.Login)
+
+	return JsonResponseOk(c, "")
+
+}
+
+func Accessible(c echo.Context) error {
+	return JsonResponseOk(c, "Accessible")
+}
+
+func JwtAuth(c echo.Context) error {
+	user := c.Get("secret").(*jwt.Token)
+	claims := user.Claims.(*JwtCustomClaims)
+	name := claims.Login
+	fmt.Println("+++++", user, claims, name)
+	fmt.Println()
+	return JsonResponseOk(c, name)
 }
 
 const (
@@ -105,7 +116,9 @@ func CheckPassword(password, hashedPassword string) bool {
 
 // curl -X POST http://localhost:4321/create-user -H "Content-Type: application/json" -d "{\"login\": \"test\", \"password\": \"123123\"}"
 func NewUser(c echo.Context) error {
+
 	var loginForm LoginForm
+	var validate *validator.Validate
 
 	err := json.NewDecoder(c.Request().Body).Decode(&loginForm)
 
@@ -116,17 +129,15 @@ func NewUser(c echo.Context) error {
 		}{"error", err.Error()})
 	}
 
-	re := regexp.MustCompile(`^[a-zA-Z0-9]+$`)
+	validate = validator.New()
 
-	re.MatchString(loginForm.Login)
-	re.MatchString(loginForm.Password)
+	user := validate.Struct(&loginForm)
 
 	if loginForm.Login == "" || loginForm.Password == "" {
 		return JsonResponseErr(c, "Please fill in the fields")
 	}
-
-	if re.MatchString(loginForm.Login) == false || re.MatchString(loginForm.Password) == false {
-		return JsonResponseErr(c, "Creating user use only numbers and letters")
+	if user != nil {
+		return JsonResponseErr(c, "Creating user use only numbers and letters, do not use less than four characters")
 	}
 
 	if err := repositories.CreateUser(loginForm.Login, HashPassword(loginForm.Password)); err != nil {
