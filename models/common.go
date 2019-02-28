@@ -1,5 +1,7 @@
 package models
 
+import jwt "github.com/dgrijalva/jwt-go"
+
 type WeeklyPayment struct {
 	PaymentUuid   string  `json:"paymentUuid"`
 	DriverUuid    string  `json:"driverUuid"`
@@ -70,4 +72,10 @@ type DriverSummary struct {
 	WeeklyPayment WeeklyPayment  `json:"weeklyPayment"`
 	Payments      []Payment      `json:"payments"`
 	Statement     Statement      `json:"statement"`
+}
+
+type JwtCustomClaims struct {
+	Name  string `json:"name,omitempty"`
+	Admin bool   `json:"admin,omitempty"`
+	jwt.StandardClaims
 }

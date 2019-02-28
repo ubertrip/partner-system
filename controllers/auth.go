@@ -8,11 +8,30 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	configuration "github.com/ubertrip/partner-system/config"
-
-	"github.com/ubertrip/partner-system/repositories"
 	"github.com/ubertrip/partner-system/utils"
+
+	m "github.com/ubertrip/partner-system/models"
+	"github.com/ubertrip/partner-system/repositories"
 	"golang.org/x/crypto/bcrypt"
 	validator "gopkg.in/go-playground/validator.v9"
+)
+
+var (
+	config = configuration.Get()
+
+	tm = utils.Midnight().Add(config.CookieExpirationTime)
+
+	claims = &m.JwtCustomClaims{
+		"friend",
+		true,
+		jwt.StandardClaims{
+			ExpiresAt: tm.Unix(),
+		},
+	}
+
+	token = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	t, _ = token.SignedString([]byte("secret"))
 )
 
 // middleware
@@ -21,7 +40,10 @@ func Middleware(next echo.HandlerFunc) echo.HandlerFunc {
 
 		if cookie, err := c.Cookie("sess"); err == nil {
 			fmt.Println(cookie.Value)
-			return next(c)
+			if cookie.Value == t {
+				fmt.Println(cookie.Value, "value", t, "token")
+				return next(c)
+			}
 		}
 		return JsonResponseErr(c, "")
 	}
@@ -33,10 +55,10 @@ type LoginForm struct {
 	ID       int    `json:"ID"`
 }
 
-type JwtCustomClaims struct {
-	Login bool `json:"login"`
-	ID    int  `json:"id"`
-	jwt.StandardClaims
+type AuthToken struct {
+	TokenType string `json:"token_type"`
+	Token     string `json:"access_token"`
+	ExpiresIn int64  `json:"expires_in"`
 }
 
 func Login(c echo.Context) error {
@@ -45,29 +67,7 @@ func Login(c echo.Context) error {
 
 	json.NewDecoder(c.Request().Body).Decode(&loginForm)
 
-	login, id := repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
-	if !login {
-		return JsonResponseErr(c, login)
-	}
-
-	config := configuration.Get()
-	tm := utils.Midnight().Add(config.CookieExpirationTime)
-
-	claims := &JwtCustomClaims{
-		login,
-		id,
-		jwt.StandardClaims{
-			ExpiresAt: tm.Unix(),
-		},
-	}
-
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	t, err := token.SignedString([]byte("secret"))
-	if err != nil {
-		fmt.Println("+")
-		return err
-	}
+	repositories.GetUserByLogin(loginForm.Login, loginForm.Password)
 
 	cookie := http.Cookie{
 		Name:     "sess",
@@ -76,27 +76,17 @@ func Login(c echo.Context) error {
 		HttpOnly: true,
 		Expires:  tm,
 	}
-
 	c.SetCookie(&cookie)
-	fmt.Println(cookie.Expires)
-	fmt.Println(claims.ID)
-	fmt.Println(claims.Login)
 
-	return JsonResponseOk(c, "")
-
+	return JsonResponseOk(c, t)
 }
 
-func Accessible(c echo.Context) error {
-	return JsonResponseOk(c, "Accessible")
-}
-
-func JwtAuth(c echo.Context) error {
-	user := c.Get("secret").(*jwt.Token)
-	claims := user.Claims.(*JwtCustomClaims)
-	name := claims.Login
+func JWTAuth(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*m.JwtCustomClaims)
+	name := claims.Name
 	fmt.Println("+++++", user, claims, name)
-	fmt.Println()
-	return JsonResponseOk(c, name)
+	return JsonResponseOk(c, "Welcome "+name+"!")
 }
 
 const (

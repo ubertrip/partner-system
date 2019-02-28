@@ -1,19 +1,13 @@
 package main
 
 import (
-	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	configuration "github.com/ubertrip/partner-system/config"
 	"github.com/ubertrip/partner-system/controllers"
+	m "github.com/ubertrip/partner-system/models"
 	"github.com/ubertrip/partner-system/repositories"
 )
-
-type JwtCustomClaims struct {
-	Login bool `json:"login,omitempty"`
-	ID    int  `json:"id,omitempty"`
-	jwt.StandardClaims
-}
 
 func main() {
 	e := echo.New()
@@ -37,18 +31,19 @@ func main() {
 	}))
 
 	r.Use(middleware.JWTWithConfig(middleware.JWTConfig{
-		Claims:      &JwtCustomClaims{},
+		Claims:      &m.JwtCustomClaims{},
 		SigningKey:  []byte("secret"),
 		TokenLookup: "cookie:sess",
 	}))
 
 	repositories.InitDB()
 
+	r.GET("", controllers.JWTAuth)
+
 	e.GET("/", controllers.Info)
 
 	e.GET("/login", controllers.Login)
 	e.POST("/login", controllers.Login)
-	e.GET("/statements", controllers.Accessible)
 
 	e.GET("/logout", controllers.Logout)
 
@@ -61,9 +56,9 @@ func main() {
 
 	e.GET("/statements", controllers.GetStatements, controllers.Middleware)
 
-	e.POST("/credit/:uuid", controllers.AddCredit, controllers.Middleware)     // :driverUuuid
-	e.GET("/credit/:uuid", controllers.GetByStatement, controllers.Middleware) // :statementUuid
-	e.GET("/credit/:statementUUID/:driverUUID", controllers.GetDriverStatement, controllers.Middleware)
+	e.POST("/credit/:uuid", controllers.AddCredit)     // :driverUuuid
+	e.GET("/credit/:uuid", controllers.GetByStatement) // :statementUuid
+	e.GET("/credit/:statementUUID/:driverUUID", controllers.GetDriverStatement)
 
 	e.Logger.Fatal(e.Start(":" + configuration.Get().Port))
 }
