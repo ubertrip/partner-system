@@ -26,4 +26,14 @@ export default class {
   static getDriverByID(id) {
     return Server.get(`drivers/${id}`);
   }
+
+  static auth(login, password) {
+    return Server.post(`login`, {
+      login, password
+    });
+  }
+
+  static logout(){
+    return Server.get(`logout`);
+  }
 }

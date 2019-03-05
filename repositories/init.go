@@ -2,10 +2,11 @@ package repositories
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"sync/atomic"
-	"os"
 	"fmt"
+	"os"
+	"sync/atomic"
+
+	_ "github.com/go-sql-driver/mysql"
 	configuration "github.com/ubertrip/partner-system/config"
 )
 

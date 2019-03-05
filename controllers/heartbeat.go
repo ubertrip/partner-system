@@ -5,7 +5,7 @@ import (
 )
 
 func Info(c echo.Context) error {
-	info := struct{
+	info := struct {
 		Name string `json:"name"`
 	}{"partner system v0.0"}
 	return JsonResponseOk(c, info)

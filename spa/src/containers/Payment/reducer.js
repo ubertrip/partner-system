@@ -29,7 +29,7 @@ export default (state = initialState, action) => {
 
 
 export const loadDriverPayments = (statementUUID, driverUUID) => (dispatch) => {
-  dispatch(toggleLoading(true, 'DriverpPayments'));
+  dispatch(toggleLoading(true, 'Driver Payments'));
   return PaymentsApi.getDriverPayments(statementUUID, driverUUID).then(({data}) => {
     if (data.status === 'ok') {
       dispatch({
@@ -63,7 +63,6 @@ export const getDriver = (id) => (dispatch) => {
 
   return PaymentsApi.getDriverByID(id).then(({data}) => {
     if (data.status === 'ok') {
-
       loadStatements()(dispatch).then(response => {
         if (data.status === 'ok') {
          if(response.length) {
@@ -80,5 +79,30 @@ export const getDriver = (id) => (dispatch) => {
   }).catch(err => {
     dispatch(toggleLoading(false));
     alert("Водитель не найден");
+  });
+};
+
+export const auth = ({login, password}) => (dispatch) => {
+  dispatch(toggleLoading(true, 'Авторизация...'));
+
+  return PaymentsApi.auth(login, password).then(({data}) => {
+    if (data.status === 'ok') {
+      history.push(`/payments`);
+      dispatch(toggleLoading(false));
+    }else{
+      console.log('it is not true login or password');
+      alert("Cannot found user");
+      dispatch(toggleLoading(false));
+    }
+  })
+};
+
+export const logout = () => {
+  return PaymentsApi.logout().then(() => {
+      history.push(`/auth`);
+  })
+  .catch((error) => {
+    console.log(error);
+    alert("Cannot out");
   });
 };

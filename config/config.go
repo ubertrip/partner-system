@@ -1,10 +1,12 @@
 package config
 
 import (
-	"github.com/spf13/viper"
+	"flag"
 	"fmt"
 	"sync/atomic"
-	"flag"
+	"time"
+
+	"github.com/spf13/viper"
 )
 
 type Database struct {
@@ -16,8 +18,9 @@ type Database struct {
 }
 
 type Config struct {
-	Port     string   `json:"port"`
-	Database Database `json:"database"`
+	Port                 string        `json:"port"`
+	Database             Database      `json:"database"`
+	CookieExpirationTime time.Duration `json:"cookieExpirationTime"`
 }
 
 var atomicConfig atomic.Value

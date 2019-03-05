@@ -29,10 +29,11 @@ export const loadStatements = () => (dispatch) => {
         type: PAYMENTS_LOAD_STATEMENTS,
         statements: data.result,
       });
+    }else{
+      history.push(`/login`)
     }
 
     dispatch(toggleLoading(false));
-
     return data.result;
   })
 };

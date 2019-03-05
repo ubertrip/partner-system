@@ -1,8 +1,9 @@
 package repositories
 
 import (
-	"github.com/ubertrip/partner-system/models"
 	"fmt"
+
+	"github.com/ubertrip/partner-system/models"
 )
 
 func UpdateDriver(driver models.Driver) (ok bool) {

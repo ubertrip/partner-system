@@ -1,10 +1,11 @@
 {
   "port": "4321",
+  "cookieExpirationTime": "4h8m",
   "database": {
     "port": "3306",
     "host": "localhost",
     "user": "root",
-    "password": "WxY7!mno",
+    "password": "",
     "schema": "partner-system"
   }
 }
