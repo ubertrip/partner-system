@@ -7,7 +7,6 @@ import {calcDriverSalary, weeklyEarnSum} from '../../utils';
 import {StatementSelect} from '../../components/StatementSelect';
 import {onChangeStatementUUID, loadStatements} from "../Payments/actions";
 
-
 const DriverWeeklyPayments = props => <div className="driver-payments-list">
   {props.payments.length ? <div>
     <h3>Платежи</h3>

@@ -87,7 +87,6 @@ export const auth = ({login, password}) => (dispatch) => {
 
   return PaymentsApi.auth(login, password).then(({data}) => {
     if (data.status === 'ok') {
-      console.log('if is works', data);
       history.push(`/payments`);
       dispatch(toggleLoading(false));
     }else{
@@ -99,9 +98,7 @@ export const auth = ({login, password}) => (dispatch) => {
 };
 
 export const logout = () => {
-  console.log("work");
   return PaymentsApi.logout().then(() => {
-    console.log('if is works');
       history.push(`/auth`);
   })
   .catch((error) => {

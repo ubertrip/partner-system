@@ -15,14 +15,12 @@ import Menu from './auth';
 import Link from './auth';
 
 
-
 const Index = props => {
   console.log(props.state)
   return <div style={{width: '800px', margin: '0 auto', textAlign: 'center'}}>
   <img src="/assets/trip.jpg" alt=""/>
   <h2>+38-050-551-62-60</h2>
 </div>};
-
 
 
 class App extends Component {

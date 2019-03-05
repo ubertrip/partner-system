@@ -1,6 +1,5 @@
 export const TOGGLE_LOADER = 'toggle-loader';
 
-
 const initialState = {
   title: 'Uber Trip',
   isLoading: false,
@@ -22,8 +21,7 @@ export default (state = initialState, action) => {
   }
 }
 
-export const toggleLoading = (value = false, text = '') => (
-  {
+export const toggleLoading = (value = false, text = '') => ({
   type: TOGGLE_LOADER,
   value,
   text,

@@ -18,13 +18,8 @@ export default class Menu extends React.Component {
             {this.state.menus.map((value, index)=>{
                 return <div key={index}>
                     <Link to={value}>{value}</Link>
-                    {/* <MenuForm 
-                menus={this.state.auth}
-                /> */}
                 </div> 
                 })}
         </div>
-
     }
-    
 }

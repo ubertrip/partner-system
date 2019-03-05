@@ -28,10 +28,8 @@ const LoginForm = props => <div className="wrapper serach-driver">
  class Login extends React.Component {
   constructor(props){
     super(props)
-    this.state = {login: '123', password: '123', isLoading: false, loadingMessage: '', router: null};
+    this.state = {login: '', password: '', isLoading: false, loadingMessage: '', router: null};
   }
-
-  // setlogin = e => this.setState({login: e.target.value});
 
 	onSendForm = e => {
     e.preventDefault();
@@ -43,7 +41,6 @@ const LoginForm = props => <div className="wrapper serach-driver">
     }
     // в этом месте отправляем на сервер    
     this.props.auth(this.state);
-    //this.props.getUser(this.state.login);
     toggleLoading(false);
     return false;
   };

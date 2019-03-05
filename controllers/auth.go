@@ -151,5 +151,4 @@ func Logout(c echo.Context) error {
 	c.SetCookie(&cookies)
 	fmt.Println("nice you logout")
 	return JsonResponseOk(c, nil)
-
 }

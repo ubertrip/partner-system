@@ -45,7 +45,7 @@ func main() {
 	e.GET("/login", controllers.Login)
 	e.POST("/login", controllers.Login)
 
-	e.GET("/logout", controllers.Logout)
+	e.GET("/", controllers.Logout)
 
 	e.POST("/create-user", controllers.NewUser)
 
